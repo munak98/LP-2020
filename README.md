@@ -4,8 +4,8 @@ Projeto de Linguagens de programação, UnB, semestre 01/2020.
 
 ## Pré-requisitos
 
-Para executar o trabalho é preciso baixar as bases de dados referentes ao ENEM 2019 em http://inep.gov.br/web/guest/microdados e descompactar o arquivo na pasta LP-2020/Data.
-Em seguida, todos os pacotes do diretório Packages devem ser movidos para o $GOPATH local com o comando a seguir:
+Para executar o trabalho é preciso baixar as bases de dados referentes ao ENEM 2019 em http://inep.gov.br/web/guest/microdados e descompactar o arquivo na pasta ./Data.
+Em seguida, todos os pacotes do diretório ./Packages devem ser movidos para o $GOPATH local com o seguinte comando:
 
 ```
 env GIT_TERMINAL_PROMPT=1 go get github.com/munak98/LP-2020/Packages/extract
