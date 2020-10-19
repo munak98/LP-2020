@@ -5,7 +5,7 @@ import (
   "encoding/csv"
   "os"
   "golang.org/x/text/encoding/charmap"
-  "extract"
+  "github.com/munak98/LP-2020/Packages/extract"
   )
 
 func main() {
