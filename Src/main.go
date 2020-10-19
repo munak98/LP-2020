@@ -14,9 +14,9 @@ func main() {
       return
     }
 
-    fmt.Printf("Reading: %s\n", fmt.Sprintf("../../Data/%s", os.Args[1]))
+    fmt.Printf("Reading: %s\n", fmt.Sprintf("../%s", os.Args[1]))
 
-    csv_file, err := os.Open(fmt.Sprintf("../../Data/%s", os.Args[1]))
+    csv_file, err := os.Open(fmt.Sprintf("../%s", os.Args[1]))
     if err != nil { //check for error in opening
       fmt.Println("An error encountered ::", err)
     }
