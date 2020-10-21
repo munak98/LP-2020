@@ -1,29 +1,27 @@
 package main
 
 import (
-  "fmt"
-  "encoding/csv"
-  "os"
-  "golang.org/x/text/encoding/charmap"
-  "github.com/munak98/LP-2020/Packages/extract"
-  )
+	"fmt"
+	"time"
+	"../Packages/extract"
+)
 
 func main() {
-    if len(os.Args) < 2 {
-      fmt.Printf("No input file. Please supply a valid csv file \n");
-      return
-    }
 
-    fmt.Printf("Reading: %s\n", fmt.Sprintf("../%s", os.Args[1]))
+	now := time.Now()
+	// wait for all processes end to track the time passed
+	defer func() {
+		fmt.Println("\nTempo de execução:", time.Since(now))
+	}()
 
-    csv_file, err := os.Open(fmt.Sprintf("../%s", os.Args[1]))
-    if err != nil { //check for error in opening
-      fmt.Println("An error encountered ::", err)
-    }
-    reader := csv.NewReader(charmap.ISO8859_1.NewDecoder().Reader(csv_file))
-    reader.Comma = ';'
+	reader := extract.CsvReader()
 
-    extract.MeanScoresUF(reader, csv_file, "DF")
+	finished := make(chan bool)
 
-    return
-  }
+	go extract.MeanScoresUF(reader, "DF", finished)
+
+	// read channel
+	<-finished
+
+	return
+}

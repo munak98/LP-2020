@@ -4,30 +4,12 @@ import (
   "strconv"
 )
 
-func fromUF(line []string, UF string) bool{
-    if line[5] == UF{
-      return true
-    } else{
-      return false
-    }
+func getScore(line []string, campo int) float64 {
+  i, _ :=  strconv.ParseFloat(line[campo], 64)
+  return i
 }
 
-func getScoreCN(line []string) float64 {
-    i, _ :=  strconv.ParseFloat(line[91], 64)
-    return i
-}
-
-func getScoreCH(line []string) float64 {
-    i, _ :=  strconv.ParseFloat(line[92], 64)
-    return i
-}
-
-func getScoreLC(line []string) float64 {
-    i, _ :=  strconv.ParseFloat(line[93], 64)
-    return i
-}
-
-func getScoreMT(line []string) float64 {
-    i, _ :=  strconv.ParseFloat(line[94], 64)
-    return i
+func getIntValue(line []string, campo int) int {
+  i, _ :=  strconv.Atoi(line[campo])
+  return i
 }
