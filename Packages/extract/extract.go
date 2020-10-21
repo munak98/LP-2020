@@ -3,18 +3,25 @@ package extract
 import (
   "fmt"
   "encoding/csv"
-  "os"
   "io"
   "github.com/montanaflynn/stats"
 )
 
+type state struct {
+	uf string
+	medias []float64
+	races []int
+}
+
 //MeanScoresUF gets means scores from a UF info from a csv file
-func MeanScoresUF(reader *csv.Reader, file *os.File, UF string, finished chan bool) []float64{
-  scores := [4][]float64{}
+func MeanScoresUF(reader *csv.Reader, UF string, finished chan bool) []float64{
+
   totalUFRecords := 0
+  scores := [4][]float64{}
+  races := []int{}
 
   //read file line by line
-  for i := 0; i < 100; i++{ 
+  for i := 0; i < 100000; i++{ 
     
     record, err := reader.Read()
 
@@ -24,15 +31,16 @@ func MeanScoresUF(reader *csv.Reader, file *os.File, UF string, finished chan bo
       fmt.Println("An error encountered ::", err)
     }
 
-    if fromUF(record, UF){
-      scores[0] = append(scores[0], getScoreCN(record))
-      scores[1] = append(scores[1], getScoreCH(record))
-      scores[2] = append(scores[2], getScoreLC(record))
-      scores[3] = append(scores[3], getScoreMT(record))
+    if record[5] == UF {
+      scores[0] = append(scores[0], getFloatScore(record, 91))
+      scores[1] = append(scores[1], getFloatScore(record, 92))
+      scores[2] = append(scores[2], getFloatScore(record, 93))
+      scores[3] = append(scores[3], getFloatScore(record, 94))
+
+      races = append(races, getIntValue(record, 9))
 
       totalUFRecords++;
     }
-
   }
 
   fmt.Printf("Total de registros analisados de %s: %d\n", UF, totalUFRecords)
@@ -42,8 +50,13 @@ func MeanScoresUF(reader *csv.Reader, file *os.File, UF string, finished chan bo
   meanLC, _ := stats.Mean(scores[2])
   meanMT, _ := stats.Mean(scores[3])
 
-  fmt.Printf("%s médias: \n\tCiências da natureza: %.2f \n\tCiências humanas: %.2f \n\tLinguagens e códigos: %.2f\n\tMatemática: %.2f\n", UF, meanCN, meanCH, meanLC, meanMT)
-	finished <- true
+  fmt.Printf("Médias de %s: \n\tCiências da natureza: %.2f \n\tCiências humanas: %.2f \n\tLinguagens e códigos: %.2f\n\tMatemática: %.2f\n", 
+    UF, meanCN, meanCH, meanLC, meanMT)
+
+  fmt.Printf("\tRaças: %v\n", races)
+
+  // set channel to true
+  finished <- true
 
   return []float64{meanCN, meanCH, meanLC, meanMT}
 }
