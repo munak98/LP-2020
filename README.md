@@ -15,7 +15,7 @@ env GIT_TERMINAL_PROMPT=1 go get github.com/munak98/LP-2020/Packages/extract
 
 Dentro da pasta Src, o trabalho pode ser executado com o comando:
 
-``
+```
 go run main.go 
 ```
 
