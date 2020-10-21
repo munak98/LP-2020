@@ -32,10 +32,10 @@ func MeanScoresUF(reader *csv.Reader, UF string, finished chan bool) []float64{
     }
 
     if record[5] == UF {
-      scores[0] = append(scores[0], getFloatScore(record, 91))
-      scores[1] = append(scores[1], getFloatScore(record, 92))
-      scores[2] = append(scores[2], getFloatScore(record, 93))
-      scores[3] = append(scores[3], getFloatScore(record, 94))
+      scores[0] = append(scores[0], getScore(record, 91))
+      scores[1] = append(scores[1], getScore(record, 92))
+      scores[2] = append(scores[2], getScore(record, 93))
+      scores[3] = append(scores[3], getScore(record, 94))
 
       races = append(races, getIntValue(record, 9))
 
