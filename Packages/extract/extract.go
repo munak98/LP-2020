@@ -6,76 +6,97 @@ import (
   "io"
 )
 
-type state struct {
-	uf string
-	medias []float64
-	races []int
-}
+// MeanScoresUF pega os dados de medias das notas de uma UF do arquivo CSV
+func MeanScoresUF(reader *csv.Reader, UF string, finished chan bool) State{
 
-// MeanScoresUF pega os dados de medias das notas de cada UF do arquivo CSV
-func MeanScoresUF(reader *csv.Reader, UF string, finished chan bool) [4]float64{
+  // notas de areas de conhecimento da UF
+  scoresUF := [4][]float64{}  
 
-  // Total de participantes da UF
-  participantsUF := 0
+  // notas de areas de conhecimento de cada raça
+  scoresPerRace := [6][4][]float64{}
 
-  // Notas de areas de conhecimento da UF
-  scoresUF := [4][]float64{}    
-
-  races := [6]string{
-    "Raça Não Informada",
-    "Raça Branca",
-    "Raça Preta",
-    "Raça Parda",
-    "Raça Amarela",
-    "Raça Indigena",
-  }
-
-  // Numero de participantes de cada raça da UF
-  participantsPerRace := [6]int{0,0,0,0,0,0}
-
-  // Notas de areas de conhecimento de cada raça
-  scoresPerRace := [6][4][]float64{}  
-
-  // Medias da Notas de areas de conhecimento de cada raça
-  meanScoresPerRace := [6][4]float64{}  
-
-  // Read file line by line
+  // gera nova estrutura de Estado (UF)
+  state := NewState(UF)
+  
+  // leitura de linha a linha do registro 
   for /* i := 0; i < 1000000; i++ */ { 
     recordLine, err := reader.Read()
 
     if err == io.EOF {
-      break   // reached end of the file
-    } else if err != nil{ //check for other errors
+      break   // chegou ao final do registro
+    } else if err != nil{ //checa por outros erros
       fmt.Println("An error encountered ::", err)
     }
 
+    // campo de UF - 5
     if recordLine[5] == UF {
+      state.totalParticipants++;
+
+      // coleta as notas de cada disciplina de toda UF
       scoresUF = getScores(recordLine, scoresUF)
 
-      participantsPerRace, scoresPerRace = 
-      getRacesData(
-        recordLine, 
-        participantsPerRace, 
-        scoresPerRace,
-      )
-
-      participantsUF++;
+      // coleta dados por raça da UF
+      scoresPerRace = getRacesData(recordLine, &state, scoresPerRace)
     }
   }
 
-  fmt.Printf("\nTotal de participantes - %s: %d\n", UF, participantsUF)
+  state.medias = getMeanScores(scoresUF)
 
-  meanScoresUF := getMeanScores(scoresUF)
-  printMeanScores(UF, meanScoresUF)
-
-  for i := range races {
-    fmt.Printf("Total de participantes - %s: %d\n", races[i],participantsPerRace[i])
-    meanScoresPerRace[i] = getMeanScores(scoresPerRace[i])
-    printMeanScores(races[i], meanScoresPerRace[i])
+  for i := range state.races {
+    state.races[i].medias = getMeanScores(scoresPerRace[i])
   }
 
-  // set channel to true
+  printUFMeanScores(state)
+  printRacesMeanScores(state)
+
+  // escreve true no canal
   finished <- true
 
-  return meanScoresUF
+  return state
+}
+
+// MeanScoresUF pega os dados de medias das notas de uma UF do arquivo CSV
+func MeanScoresUF2(reader *csv.Reader, UF string) State{
+
+  // notas de areas de conhecimento da UF
+  scoresUF := [4][]float64{}  
+
+  // notas de areas de conhecimento de cada raça
+  scoresPerRace := [6][4][]float64{}
+
+  // gera nova estrutura de Estado (UF)
+  state := NewState(UF)
+  
+  // leitura de linha a linha do registro 
+  for /* i := 0; i < 1000000; i++ */ { 
+    recordLine, err := reader.Read()
+
+    if err == io.EOF {
+      break   // chegou ao final do registro
+    } else if err != nil{ //checa por outros erros
+      fmt.Println("An error encountered ::", err)
+    }
+
+    // campo de UF - 5
+    if recordLine[5] == UF {
+      state.totalParticipants++;
+
+      // coleta as notas de cada disciplina de toda UF
+      scoresUF = getScores(recordLine, scoresUF)
+
+      // coleta dados por raça da UF
+      scoresPerRace = getRacesData(recordLine, &state, scoresPerRace)
+    }
+  }
+
+  state.medias = getMeanScores(scoresUF)
+
+  for i := range state.races {
+    state.races[i].medias = getMeanScores(scoresPerRace[i])
+  }
+
+  printUFMeanScores(state)
+  printRacesMeanScores(state)
+
+  return state
 }
