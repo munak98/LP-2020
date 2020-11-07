@@ -6,8 +6,8 @@ import (
   "io"
 )
 
-// MeanScoresUF pega os dados de medias das notas de uma UF do arquivo CSV
-func MeanScoresUF(reader *csv.Reader, UF string, finished chan bool) State{
+// MeanScoresUF pega os dados de Medias das notas de uma UF do arquivo CSV
+func MeanScoresUF(reader *csv.Reader, UF string, finished chan<- bool) State{
 
   // notas de areas de conhecimento da UF
   scoresUF := [4][]float64{}  
@@ -17,6 +17,8 @@ func MeanScoresUF(reader *csv.Reader, UF string, finished chan bool) State{
 
   // gera nova estrutura de Estado (UF)
   state := NewState(UF)
+
+  count := 0
   
   // leitura de linha a linha do registro 
   for /* i := 0; i < 1000000; i++ */ { 
@@ -30,7 +32,7 @@ func MeanScoresUF(reader *csv.Reader, UF string, finished chan bool) State{
 
     // campo de UF - 5
     if recordLine[5] == UF {
-      state.totalParticipants++;
+      state.Total++;
 
       // coleta as notas de cada disciplina de toda UF
       scoresUF = getScores(recordLine, scoresUF)
@@ -38,12 +40,15 @@ func MeanScoresUF(reader *csv.Reader, UF string, finished chan bool) State{
       // coleta dados por raça da UF
       scoresPerRace = getRacesData(recordLine, &state, scoresPerRace)
     }
+    count++
   }
 
-  state.medias = getMeanScores(scoresUF)
+  fmt.Println("Numero de registros analisados:", count)
 
-  for i := range state.races {
-    state.races[i].medias = getMeanScores(scoresPerRace[i])
+  state.Medias = getMeanScores(scoresUF)
+
+  for i := range state.Races {
+    state.Races[i].Medias = getMeanScores(scoresPerRace[i])
   }
 
   printUFMeanScores(state)
@@ -55,8 +60,9 @@ func MeanScoresUF(reader *csv.Reader, UF string, finished chan bool) State{
   return state
 }
 
-// MeanScoresUF pega os dados de medias das notas de uma UF do arquivo CSV
-func MeanScoresUF2(reader *csv.Reader, UF string) State{
+// MeanScoresUF pega os dados de Medias das notas de uma UF do arquivo CSV - 
+// Sem Goroutine!
+func NormalMeanScoresUF(reader *csv.Reader, UF string) State{
 
   // notas de areas de conhecimento da UF
   scoresUF := [4][]float64{}  
@@ -66,6 +72,8 @@ func MeanScoresUF2(reader *csv.Reader, UF string) State{
 
   // gera nova estrutura de Estado (UF)
   state := NewState(UF)
+
+  count := 0
   
   // leitura de linha a linha do registro 
   for /* i := 0; i < 1000000; i++ */ { 
@@ -79,7 +87,7 @@ func MeanScoresUF2(reader *csv.Reader, UF string) State{
 
     // campo de UF - 5
     if recordLine[5] == UF {
-      state.totalParticipants++;
+      state.Total++;
 
       // coleta as notas de cada disciplina de toda UF
       scoresUF = getScores(recordLine, scoresUF)
@@ -89,10 +97,12 @@ func MeanScoresUF2(reader *csv.Reader, UF string) State{
     }
   }
 
-  state.medias = getMeanScores(scoresUF)
+  fmt.Println("Numero de registros analisados:", count)
 
-  for i := range state.races {
-    state.races[i].medias = getMeanScores(scoresPerRace[i])
+  state.Medias = getMeanScores(scoresUF)
+
+  for i := range state.Races {
+    state.Races[i].Medias = getMeanScores(scoresPerRace[i])
   }
 
   printUFMeanScores(state)

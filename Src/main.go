@@ -9,7 +9,8 @@ import (
 
 func main() {
 
-	finished := make(chan bool)	// cria um canal para mensurar tempos
+	// cria um canal para goroutine
+	finished := make(chan bool)	
 	
 	reader := extract.CsvReader()
 
@@ -41,7 +42,7 @@ func main() {
 				fmt.Println("\n\nTempo de execução:", time.Since(now))
 			}()
 			
-			extract.MeanScoresUF2(reader, UF)
+			extract.NormalMeanScoresUF(reader, UF)
 		
 			break
 		case 2:
@@ -52,8 +53,9 @@ func main() {
 
 			go extract.MeanScoresUF(reader, UF, finished)
 
-			//leitura do canal
+			// recebe 
 			<-finished
+			
 			break
 		default:
 			fmt.Println("Opção Inválida!")

@@ -36,32 +36,39 @@ func Contains(list []string, str string) bool {
 	return false
 }
 
+// printa dados acerca da UF 
 func printUFMeanScores(state State) {
 	fmt.Println("---------------------------------------")
-	fmt.Printf("\nDados de %s", state.uf)
-	fmt.Printf("\nTotal de participantes: %d\n", state.totalParticipants)
+	fmt.Printf("\nDados de %s", state.UF)
+	fmt.Printf("\nTotal de participantes: %d\n", state.Total)
 	fmt.Println("Médias:")
 	
 	fmt.Printf("\tCiências da natureza: %.2f \n\tCiências humanas: %.2f \n\tLinguagens e códigos: %.2f\n\tMatemática: %.2f\n\n",
-		state.medias[0], 
-		state.medias[1], 
-		state.medias[2], 
-		state.medias[3], 
+		state.Medias[0], 
+		state.Medias[1], 
+		state.Medias[2], 
+		state.Medias[3], 
 	)
-	
+
+	fmt.Printf("Numero de participantes de Escola Publica: %d\n", state.SchoolType[1])
+	fmt.Printf("Numero de participantes de Escola Privada: %d\n", state.SchoolType[2])
 }
+
+// printa dados acerca de cada raça
 func printRacesMeanScores(state State) {
 
-	for i := range state.races {
+	for i := range state.Races {
 		fmt.Println("---------------------------------------")
-		fmt.Printf("\nDados de %s", state.races[i].name)
-		fmt.Printf("\nTotal de participantes: %d\n", state.races[i].total)
+		fmt.Printf("\nDados de %s", state.Races[i].Name)
+		fmt.Printf("\nTotal de participantes: %d\n", state.Races[i].Total)
 		fmt.Printf("Médias: \n\tCiências da natureza: %.2f \n\tCiências humanas: %.2f \n\tLinguagens e códigos: %.2f\n\tMatemática: %.2f\n\n",
-			state.races[i].medias[0], 
-			state.races[i].medias[1], 
-			state.races[i].medias[2], 
-			state.races[i].medias[3], 
+			state.Races[i].Medias[0], 
+			state.Races[i].Medias[1], 
+			state.Races[i].Medias[2], 
+			state.Races[i].Medias[3], 
 		)
+		fmt.Printf("Numero de participantes de Escola Publica: %d\n", state.Races[i].SchoolType[1])
+		fmt.Printf("Numero de participantes de Escola Privada: %d\n", state.Races[i].SchoolType[2])
 	}
 
 }

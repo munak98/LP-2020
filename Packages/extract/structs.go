@@ -2,37 +2,40 @@ package extract
 
 //State - Estrutura de Estado (UF)
 type State struct {
-	uf               string
-	totalParticipants int
-	medias           [4]float64
-	races            [6]Race	// 6 raças ao total 
+	UF         string
+	Total      int
+	Medias     [4]float64
+	Races      [6]Race // 6 raças ao total
+	SchoolType [4]int
 }
 
-//Race - Estrutura de Raças 
+//Race - Estrutura de Raças
 type Race struct {
-	name     string
-	raceType int
-	total    int
-	medias   [4]float64
+	Name       string
+	RaceType   int
+	Total      int
+	Medias     [4]float64
+	SchoolType [4]int
 }
 
 //NewState construtor de Estrutura do Estado (UF)
-func NewState (uf string) State {
+func NewState(UF string) State {
 
 	// Cria a Estrutura do Estado (UF)
-  state := State {
-    races: [6]Race {
-      Race {name: "Raça Não Informada", raceType: 0},
-      Race {name: "Raça Branca", raceType: 1},
-      Race {name: "Raça Preta", raceType: 2},
-      Race {name: "Raça Parda", raceType: 3},
-      Race {name: "Raça Amarela", raceType: 4},
-      Race {name: "Indigena", raceType: 5},
-    },
-  }
+	state := State{
 
-  state.uf = uf
-  state.totalParticipants = 0
+		Races: [6]Race{
+			Race{Name: "Raça Não Informada", RaceType: 0},
+			Race{Name: "Raça Branca", RaceType: 1},
+			Race{Name: "Raça Preta", RaceType: 2},
+			Race{Name: "Raça Parda", RaceType: 3},
+			Race{Name: "Raça Amarela", RaceType: 4},
+			Race{Name: "Indigena", RaceType: 5},
+		},
+	}
+
+	state.UF = UF
+	state.Total = 0
 
 	return state
 }
