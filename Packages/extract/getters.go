@@ -27,9 +27,9 @@ func getScores(recordLine []string, scores [4][]float64) [4][]float64 {
 	return scores
 }
 
-
+// Pega as medias das notas de cada area de conhecimento
 func getMeanScores(scores [4][]float64) ([4]float64) {
-  meanScores := [4]float64{0,0,0,0}
+  meanScores := [4]float64{}
   
   for i := range scores {
     meanScores[i], _ = stats.Mean(scores[i])
@@ -38,36 +38,37 @@ func getMeanScores(scores [4][]float64) ([4]float64) {
 	return meanScores
 }
 
+// Pega os dados de cada Raça e poe na estrutura Estado
 func getRacesData(
-	recordLine []string,
-	participantsPerRace [6]int,
+	recordLine []string, 
+	s *State, 
 	scoresPerRace [6][4][]float64,
-) ([6]int, [6][4][]float64) {
+	) ([6][4][]float64) {
 
 	// Tipo de cor/raça - campo 9
 	switch getIntValue(recordLine, 9) {
 	case 0:
-		participantsPerRace[0]++ // Não informado
+		s.races[0].total++ // Não informado
 		scoresPerRace[0] = getScores(recordLine, scoresPerRace[0])
 		break
 	case 1:
-		participantsPerRace[1]++ // Branca
+		s.races[1].total++ // Branca
 		scoresPerRace[1] = getScores(recordLine, scoresPerRace[1])
 		break
 	case 2:
-		participantsPerRace[2]++ // Preta
+		s.races[2].total++ // Preta
 		scoresPerRace[2] = getScores(recordLine, scoresPerRace[2])
 		break
 	case 3:
-		participantsPerRace[3]++ // Parda
+		s.races[3].total++ // Parda
 		scoresPerRace[3] = getScores(recordLine, scoresPerRace[3])
 		break
 	case 4:
-		participantsPerRace[4]++ // Amarela
+		s.races[4].total++ // Amarela
 		scoresPerRace[4] = getScores(recordLine, scoresPerRace[4])
 		break
 	case 5:
-		participantsPerRace[5]++ // Indigena
+		s.races[5].total++ // Indigena
 		scoresPerRace[5] = getScores(recordLine, scoresPerRace[5])
 		break
 	default:
@@ -75,5 +76,5 @@ func getRacesData(
 		break
 	}
 
-	return participantsPerRace, scoresPerRace
+	return scoresPerRace
 }
