@@ -8,11 +8,11 @@ import (
 
 const msgError = "Valor esperado %v, mas o valor encontrado foi %v"
 
-func TestMeanScoresUF(t *testing.T) {
+func TestUFData(t *testing.T) {
 	t.Parallel()
 
 	reader := extract.CsvReader()
-	state := extract.NormalMeanScoresUF(reader, "DF")	// testa dados do DF
+	state := extract.UFDataNormal(reader, "DF")	// testa dados do DF
 
 	totalParticipantsExpected := state.Total
 

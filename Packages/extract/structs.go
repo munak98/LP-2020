@@ -30,7 +30,7 @@ func NewState(UF string) State {
 			Race{Name: "Raça Preta", RaceType: 2},
 			Race{Name: "Raça Parda", RaceType: 3},
 			Race{Name: "Raça Amarela", RaceType: 4},
-			Race{Name: "Indigena", RaceType: 5},
+			Race{Name: "Raça Indigena", RaceType: 5},
 		},
 	}
 

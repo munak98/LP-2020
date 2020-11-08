@@ -42,16 +42,17 @@ func main() {
 				fmt.Println("\n\nTempo de execução:", time.Since(now))
 			}()
 			
-			extract.NormalMeanScoresUF(reader, UF)
+			extract.UFDataNormal(reader, UF)
 		
 			break
 		case 2:
 			now := time.Now()
+			// defer - Espera todos processos finalizarem
 			defer func() {
 				fmt.Println("\n\nTempo de execução:", time.Since(now))
 			}()
 
-			go extract.MeanScoresUF(reader, UF, finished)
+			go extract.UFData(reader, UF, finished)
 
 			// recebe 
 			<-finished
