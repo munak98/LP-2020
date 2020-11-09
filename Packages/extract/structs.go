@@ -2,7 +2,8 @@ package extract
 
 //State - Estrutura de Estado (UF)
 type State struct {
-	UF         string
+	Sigla      string
+	Codigo 		 int
 	Total      int
 	Medias     [4]float64
 	Races      [6]Race // 6 raças ao total
@@ -34,7 +35,7 @@ func NewState(UF string) State {
 		},
 	}
 
-	state.UF = UF
+	state.Sigla = UF
 	state.Total = 0
 
 	return state

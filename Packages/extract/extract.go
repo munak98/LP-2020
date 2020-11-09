@@ -1,98 +1,137 @@
 package extract
 
 import (
-  "fmt"
-  "encoding/csv"
-  "io"
+	"encoding/csv"
+	"fmt"
+	"io"
 )
 
-//UFData pega os dados de Medias das notas de uma UF do arquivo CSV
-func UFData(reader *csv.Reader, UF string, finished chan<- bool) State{
+/* SEM PARALELISMO */
 
-  // notas de areas de conhecimento da UF
-  scoresUF := [4][]float64{}  
+//UFData pega os dados de Medias das notas de uma UF do arquivo CSV - Sem Goroutine!
+func UFData(reader *csv.Reader, states []State) {
 
-  // notas de areas de conhecimento de cada raça
-  scoresPerRace := [6][4][]float64{}
+	// notas de areas de conhecimento da UF
+	scoresUF := [4][]float64{}
 
-  // gera nova estrutura de Estado (UF)
-  state := NewState(UF)
+	// notas de areas de conhecimento de cada raça
+	scoresPerRace := [6][4][]float64{}
 
-  totalRecords := totalRecords(reader)
+	count := 0
 
-  worker1 := make(chan bool)
-  worker2 := make(chan bool)
-  
-  getData(reader, &state, &scoresUF, &scoresPerRace, 0, totalRecords / 2,  worker1)
-  getData(reader, &state, &scoresUF, &scoresPerRace, totalRecords / 2, totalRecords, worker2)
+	// leitura de linha a linha do registro
+	for /* i := 0; i < 1000000; i++ */ {
+		recordLine, err := reader.Read()
 
-  // recebe 
-  <-worker1
-  <-worker2
+		if err == io.EOF {
+			break // chegou ao final do registro
+		} else if err != nil { //checa por outros erros
+			fmt.Println("An error encountered ::", err)
+		}
 
-  fmt.Println("Numero de registros analisados:", totalRecords)
+		count++
 
-  state.Medias = getMeanScores(scoresUF)
+		for i := range states {
+			if states[i].Sigla == recordLine[5] {
 
-  for i := range state.Races {
-    state.Races[i].Medias = getMeanScores(scoresPerRace[i])
-  }
+				states[i].Total++
 
-  printUFMeanScores(state)
-  printRacesMeanScores(state)
+				// coleta as notas de cada disciplina de toda UF
+				getScores(recordLine, &scoresUF)
 
-  // escreve true no canal
-  finished <- true
+				// coleta dados por raça da UF
+				getRacesData(recordLine, &states[i], &scoresPerRace)
+			}
+		}
 
-  return state
+	}
+
+	fmt.Println("Numero de registros analisados:", count)
+
+	for i := range states {
+
+		states[i].Medias = getMeanScores(scoresUF)
+
+		for j := range states[i].Races {
+			states[i].Races[j].Medias = getMeanScores(scoresPerRace[j])
+		}
+
+		// printUFMeanScores(states[i])
+		// printRacesMeanScores(states[i])
+	}
+
+	printUFMeanScores(states[6])
+	printRacesMeanScores(states[6])
+
+	return
 }
 
-//UFDataNormal pega os dados de Medias das notas de uma UF do arquivo CSV - Sem Goroutine!
-func UFDataNormal(reader *csv.Reader, UF string) State{
+/* COM PARALELISMO */
 
-  // notas de areas de conhecimento da UF
-  scoresUF := [4][]float64{}  
+//UFData pega os dados de Medias das notas de uma UF do arquivo CSV
+func UFDataPallel(reader *csv.Reader, states []State) {
 
-  // notas de areas de conhecimento de cada raça
-  scoresPerRace := [6][4][]float64{}
+	// notas de areas de conhecimento da UF
+	scoresUF := [4][]float64{}
 
-  // gera nova estrutura de Estado (UF)
-  state := NewState(UF)
+	// notas de areas de conhecimento de cada raça
+	scoresPerRace := [6][4][]float64{}
 
-  count := 0
+	count := 0
+
+	// ch := make(chan bool)
+
+	// var wg sync.WaitGroup
+
+	// leitura de linha a linha do registro
+	for /* i := 0; i < 1000000; i++ */ {
+		recordLine, err := reader.Read()
+		count++
+
+		if err == io.EOF {
+			break // chegou ao final do registro
+		} else if err != nil { //checa por outros erros
+			fmt.Println("An error encountered ::", err)
+		}
+
+		for i := range states {
+			if states[i].Sigla == recordLine[5] {
+
+        // wg.Add(1)
+
+        states[i].Total++
+
+        // coleta as notas de cada disciplina de toda UF
+        go getScores(recordLine, &scoresUF)
+
+        // coleta dados por raça da UF
+        go getRacesData(recordLine, &states[i], &scoresPerRace)
+
+			}
+		}
+  }
   
-  // leitura de linha a linha do registro 
-  for /* i := 0; i < 1000000; i++ */ { 
-    recordLine, err := reader.Read()
+  // go func() {
+  //   wg.Wait()
+  //   close(ch)
+  // }()
 
-    if err == io.EOF {
-      break   // chegou ao final do registro
-    } else if err != nil{ //checa por outros erros
-      fmt.Println("An error encountered ::", err)
-    }
+	fmt.Println("Numero de registros analisados:", count)
 
-    // campo de UF - 5
-    if recordLine[5] == UF {
-      state.Total++;
+	for i := range states {
 
-      // coleta as notas de cada disciplina de toda UF
-      getScores(recordLine, &scoresUF)
+		states[i].Medias = getMeanScores(scoresUF)
 
-      // coleta dados por raça da UF
-      getRacesData(recordLine, &state, &scoresPerRace)
-    }
-  }
+		for j := range states[i].Races {
+			states[i].Races[j].Medias = getMeanScores(scoresPerRace[j])
+		}
 
-  fmt.Println("Numero de registros analisados:", count)
+		// printUFMeanScores(states[i])
+		// printRacesMeanScores(states[i])
+	}
 
-  state.Medias = getMeanScores(scoresUF)
+	go printUFMeanScores(states[6])
+	go printRacesMeanScores(states[6])
 
-  for i := range state.Races {
-    state.Races[i].Medias = getMeanScores(scoresPerRace[i])
-  }
-
-  printUFMeanScores(state)
-  printRacesMeanScores(state)
-
-  return state
+	return
 }

@@ -129,23 +129,22 @@ func getData(
 	s *State,
 	scoresUF *[4][]float64,
 	scoresPerRace *[6][4][]float64,
-	begin int,
-	end int,
-	done chan<- bool,
+	count int, 
+	done chan bool,
 ) {
 
 	go func() {
-	for i := begin; i < end; i++ {
-		recordLine, err := reader.Read()
-		
-		if err == io.EOF {
-			break // chegou ao final do registro
+		for /* i := begin; true ;i++ */ {
+			recordLine, err := reader.Read()
+			
+			if err == io.EOF {
+				break // chegou ao final do registro
 			} else if err != nil { //checa por outros erros
 				fmt.Println("An error encountered ::", err)
 			}
-			
+				
 			// campo de UF = 5
-			if recordLine[5] == s.UF {
+			if recordLine[5] == s.Sigla {
 				s.Total++
 				
 				// coleta as notas de cada disciplina de toda UF
@@ -154,8 +153,9 @@ func getData(
 				// coleta dados por raça da UF
 				getRacesData(recordLine, s, scoresPerRace)
 			}
+			count++
 		}
-		// escreve true no canal
-		done <- true
 	}()
+
+	done <- true // recebe true no canal
 }

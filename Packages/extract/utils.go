@@ -29,16 +29,18 @@ func CsvReader() *csv.Reader {
 }
 
 // Contains verifica se existe string em um array de strings
-func Contains(list []string, str string) bool {
-	for _, item := range list {
-		if item == str {
+func Contains(UFs []State, str string) bool {
+
+	for _, item := range UFs {
+		if item.Sigla == str {
 			return true
 		}
 	}
+
 	return false
 }
 
-//N funfa..
+//MeasureTime N funfa..
 func MeasureTime() {
 	now := time.Now()
 	defer func() {
@@ -49,7 +51,7 @@ func MeasureTime() {
 // printa dados acerca da UF
 func printUFMeanScores(state State) {
 	fmt.Println("---------------------------------------")
-	fmt.Printf("\nDados de %s", state.UF)
+	fmt.Printf("\nDados de %s", state.Sigla)
 	fmt.Printf("\nTotal de participantes: %d\n", state.Total)
 	fmt.Println("Médias:")
 

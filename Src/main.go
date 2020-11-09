@@ -14,57 +14,50 @@ func main() {
 	
 	reader := extract.CsvReader()
 
-	UFs := []string{"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", 
+	siglas := []string{"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", 
 		"PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"}
-	fmt.Println("Escolha de qual UF deseja extrair dados: ")
-	for i := range UFs {
-		fmt.Printf("%s ", UFs[i])
+
+	// gera array de estruturas de Estado (UFs)
+	states := []extract.State{}
+	for i := range siglas {
+		states = append(states, extract.NewState(siglas[i]))
 	}
+
+	opcao := 0
+	fmt.Println("Escolha uma opção:")
+	fmt.Printf("\t1) Sem go routines\n")
+	fmt.Printf("\t2) Com go routines\n")
 	fmt.Print("\n-> ")
+	fmt.Scan(&opcao)
 
-	var UF string
-	fmt.Scan(&UF)
-
-	if extract.Contains(UFs, UF) == true {
+	switch opcao {
+	case 1:
+		now := time.Now()
+		// defer - Espera todos processos finalizarem
+		defer func() {
+			fmt.Println("\n\nTempo de execução:", time.Since(now))
+		}()
 		
-		opcao := 0
-		fmt.Println("Escolha uma opção:")
-		fmt.Printf("\t1) Sem go routines\n")
-		fmt.Printf("\t2) Com go routines\n")
-		fmt.Print("\n-> ")
-		fmt.Scan(&opcao)
+		extract.UFData(reader, states)
+	
+		break
+	case 2:
+		now := time.Now()
+		defer func() {
+			fmt.Println("\n\nTempo de execução:", time.Since(now))
+		}()
 
-		switch opcao {
-		case 1:
-			now := time.Now()
-			// defer - Espera todos processos finalizarem
-			defer func() {
-				fmt.Println("\n\nTempo de execução:", time.Since(now))
-			}()
-			
-			extract.UFDataNormal(reader, UF)
+		extract.UFDataPallel(reader, states)
+
+		// recebe 
+		<-finished
 		
-			break
-		case 2:
-			now := time.Now()
-			// defer - Espera todos processos finalizarem
-			defer func() {
-				fmt.Println("\n\nTempo de execução:", time.Since(now))
-			}()
-
-			go extract.UFData(reader, UF, finished)
-
-			// recebe 
-			<-finished
-			
-			break
-		default:
-			fmt.Println("Opção Inválida!")
-			break;
-		}
-	} else {
-		fmt.Print("Escolha inválida!")
+		break
+	default:
+		fmt.Println("Opção Inválida!")
+		break;
 	}
+		
 	
 	return
 }
