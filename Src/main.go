@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"time"
 
 	"../Packages/extract"
 )
@@ -10,18 +9,11 @@ import (
 func main() {
 
 	// cria um canal para goroutine
-	finished := make(chan bool)	
+	// finished := make(chan bool)	
 	
 	reader := extract.CsvReader()
 
-	siglas := []string{"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", 
-		"PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"}
-
-	// gera array de estruturas de Estado (UFs)
-	states := []extract.State{}
-	for i := range siglas {
-		states = append(states, extract.NewState(siglas[i]))
-	}
+	states := extract.NewStates();
 
 	opcao := 0
 	fmt.Println("Escolha uma opção:")
@@ -32,32 +24,22 @@ func main() {
 
 	switch opcao {
 	case 1:
-		now := time.Now()
-		// defer - Espera todos processos finalizarem
-		defer func() {
-			fmt.Println("\n\nTempo de execução:", time.Since(now))
-		}()
-		
-		extract.UFData(reader, states)
-	
+		states = extract.Data(reader, states)
+
 		break
 	case 2:
-		now := time.Now()
-		defer func() {
-			fmt.Println("\n\nTempo de execução:", time.Since(now))
-		}()
-
-		extract.UFDataPallel(reader, states)
+		extract.DataPallel(reader, states)
 
 		// recebe 
-		<-finished
+		// <-finished
 		
 		break
 	default:
 		fmt.Println("Opção Inválida!")
 		break;
 	}
-		
-	
+
+	extract.Menu(states)
+
 	return
 }

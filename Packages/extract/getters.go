@@ -19,14 +19,25 @@ func getIntValue(recordLine []string, campo int) int {
 	return i
 }
 
-// Pega as notas de areas de conhecimento
-func getScores(recordLine []string, scores *[4][]float64) { 
+func getScores(recordLine []string, scores [4][]float64) [4][]float64{ 
 	scores[0] = append(scores[0], getScore(recordLine, 91)) // Ciencias da Natureza - campo 91
 	scores[1] = append(scores[1], getScore(recordLine, 92)) // Ciencias Humanas - campo 92
 	scores[2] = append(scores[2], getScore(recordLine, 93)) // Linguagens e Código - campo 93
 	scores[3] = append(scores[3], getScore(recordLine, 94)) // Matemática - campo 94
 
-	return 
+	return scores
+}
+
+// Pega as notas de areas de conhecimento de cada UF
+func getUFScores(recordLine []string, state *State) {
+	state.Scores = getScores(recordLine, state.Scores)
+	return
+}
+
+// Pega as notas de areas de conhecimento de Cada Raça
+func getRaceScores(recordLine []string, state *State, raceType int) {
+	state.Races[raceType].Scores = getScores(recordLine, state.Races[raceType].Scores)
+	return
 }
 
 // Pega as medias das notas de cada area de conhecimento
@@ -44,7 +55,6 @@ func getMeanScores(scores [4][]float64) [4]float64 {
 func getRacesData(
 	recordLine []string,
 	s *State,
-	scoresPerRace *[6][4][]float64,
 ) {
 
 	// Tipo de cor/raça - campo 9
@@ -56,38 +66,38 @@ func getRacesData(
 	switch raceType {
 	case 0:
 		s.Races[0].Total++ // Não informado
-		getScores(recordLine, &scoresPerRace[0])
-		getSchoolType(s, 0, schoolType)
+		getRaceScores(recordLine, s, raceType)
+		getSchoolType(s, raceType, schoolType)
 
 		break
 	case 1:
 		s.Races[1].Total++ // Branca
-		getScores(recordLine, &scoresPerRace[1])
-		getSchoolType(s, 1, schoolType)
+		getRaceScores(recordLine, s, raceType)
+		getSchoolType(s, raceType, schoolType)
 
 		break
 	case 2:
 		s.Races[2].Total++ // Preta
-		getScores(recordLine, &scoresPerRace[2])
-		getSchoolType(s, 2, schoolType)
+		getRaceScores(recordLine, s, raceType)
+		getSchoolType(s, raceType, schoolType)
 
 		break
 	case 3:
 		s.Races[3].Total++ // Parda
-		getScores(recordLine, &scoresPerRace[3])
-		getSchoolType(s, 3, schoolType)
+		getRaceScores(recordLine, s, raceType)
+		getSchoolType(s, raceType, schoolType)
 
 		break
 	case 4:
 		s.Races[4].Total++ // Amarela
-		getScores(recordLine, &scoresPerRace[4])
-		getSchoolType(s, 4, schoolType)
+		getRaceScores(recordLine, s, raceType)
+		getSchoolType(s, raceType, schoolType)
 
 		break
 	case 5:
 		s.Races[5].Total++ // Indigena
-		getScores(recordLine, &scoresPerRace[5])
-		getSchoolType(s, 5, schoolType)
+		getRaceScores(recordLine, s, raceType)
+		getSchoolType(s, raceType, schoolType)
 
 		break
 	default:
@@ -95,7 +105,7 @@ func getRacesData(
 		break
 	}
 
-	return 
+	return
 }
 
 // pega os tipos de escola
@@ -126,34 +136,38 @@ func getSchoolType(s *State, raceType int, schoolType int) {
 
 func getData(
 	reader *csv.Reader,
-	s *State,
+	states []State,
 	scoresUF *[4][]float64,
 	scoresPerRace *[6][4][]float64,
-	count int, 
 	done chan bool,
 ) {
+
+	count := 0
 
 	go func() {
 		for /* i := begin; true ;i++ */ {
 			recordLine, err := reader.Read()
-			
+
 			if err == io.EOF {
 				break // chegou ao final do registro
 			} else if err != nil { //checa por outros erros
 				fmt.Println("An error encountered ::", err)
 			}
-				
-			// campo de UF = 5
-			if recordLine[5] == s.Sigla {
-				s.Total++
-				
-				// coleta as notas de cada disciplina de toda UF
-				getScores(recordLine, scoresUF)
-				
-				// coleta dados por raça da UF
-				getRacesData(recordLine, s, scoresPerRace)
-			}
+
 			count++
+			
+			for i := range states {
+				if states[i].Sigla == recordLine[5] {
+
+					states[i].Total++
+
+					// coleta as notas de cada area da UF
+					getUFScores(recordLine, &states[i])
+
+					// coleta dados de cada area por raça da UF
+					getRacesData(recordLine, &states[i])
+				}
+			}
 		}
 	}()
 

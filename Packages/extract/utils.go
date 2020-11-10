@@ -28,10 +28,10 @@ func CsvReader() *csv.Reader {
 	return reader
 }
 
-// Contains verifica se existe string em um array de strings
-func Contains(UFs []State, str string) bool {
+// Contains verifica se existe string na propiedade sigla de states
+func Contains(states []State, str string) bool {
 
-	for _, item := range UFs {
+	for _, item := range states {
 		if item.Sigla == str {
 			return true
 		}
@@ -48,8 +48,36 @@ func MeasureTime() {
 	}()
 }
 
+//Menu para escolher quais dados mostrar
+func Menu(states []State) {
+	UFs := []string{"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", 
+		"PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"}
+	fmt.Println("Escolha de qual UF deseja extrair dados: ")
+	for i := range UFs {
+		fmt.Printf("%s ", UFs[i])
+	}
+	fmt.Print("\n-> ")
+
+	var UF string
+	fmt.Scan(&UF)
+
+	// verifica se existe UF no arrays de structs states
+	if Contains(states, UF) == true {
+
+		for i := range states {
+			if UF == states[i].Sigla{
+				PrintUFMeanScores(states[i])
+				PrintRacesMeanScores(states[i])
+			}
+		}
+
+	}else {
+		fmt.Print("UF digitada inválida!")
+	}
+}
+
 // printa dados acerca da UF
-func printUFMeanScores(state State) {
+func PrintUFMeanScores(state State) {
 	fmt.Println("---------------------------------------")
 	fmt.Printf("\nDados de %s", state.Sigla)
 	fmt.Printf("\nTotal de participantes: %d\n", state.Total)
@@ -67,7 +95,7 @@ func printUFMeanScores(state State) {
 }
 
 // printa dados acerca de cada raça
-func printRacesMeanScores(state State) {
+func PrintRacesMeanScores(state State) {
 
 	for i := range state.Races {
 		fmt.Println("---------------------------------------")
@@ -86,6 +114,8 @@ func printRacesMeanScores(state State) {
 }
 
 // pega o total de registros do arquivo CSV
+// cuidado ao usar pois ao percorrer todo CSV, 
+// tem que reler para percorrer de novo
 func totalRecords(reader *csv.Reader) int {
 	count := 0
 	// leitura de linha a linha do registro
