@@ -8,12 +8,7 @@ import (
 
 func main() {
 
-	// cria um canal para goroutine
-	finished := make(chan bool)	
-	
-	reader := extract.CsvReader()
-
-	states := extract.NewStates();
+	states := extract.NewStates()
 
 	opcao := 0
 	fmt.Println("Escolha uma opção:")
@@ -24,18 +19,13 @@ func main() {
 
 	switch opcao {
 	case 1:
-		states = extract.Data(reader, states)
+
+		states = extract.Data(states)
 
 		break
 	case 2:
 
-		// cria um canal para goroutine
-		//statesChannel := make(chan []extract.State)
-
-		go extract.DataPallel(reader, &states, finished)
-
-		// recebe 
-		<-finished
+		extract.DataPallel(&states)
 		
 		break
 	default:

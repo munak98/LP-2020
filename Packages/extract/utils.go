@@ -17,7 +17,6 @@ func CsvReader() *csv.Reader {
 	fmt.Printf("FilePath: %s\n", csvFilePath)
 
 	csvFile, err := os.Open(csvFilePath)
-
 	if err != nil { // chaca se ocorre erros na abertura do csv
 		fmt.Println("An error encountered ::", err)
 	}
