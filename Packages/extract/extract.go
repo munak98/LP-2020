@@ -43,7 +43,7 @@ func Data(states []State) []State {
 				getRacesData(recordLine, &states[i])
 			}
 		}
-		// fmt.Println("Processando linha:", count)
+		//fmt.Println("Processando linha:", count)
 
 	}
 	fmt.Println("\nNumero de registros analisados:", count)
@@ -59,13 +59,11 @@ func Data(states []State) []State {
 func DataPallel(states *[]State) {
 
 	start := time.Now()
-	// defer - Espera todos processos finalizarem
 	defer func() {
 		fmt.Println("\n\nTempo de execução:", time.Since(start))
 	}()
 
 	reader := CsvReader()
-	ch := make(chan []string)
 	var wg sync.WaitGroup
 	count := 0
 
@@ -95,24 +93,13 @@ func DataPallel(states *[]State) {
 					// coleta dados de cada area por raça da UF
 					getRacesData(recordLine, &(*states)[i])
 
-					//fmt.Println("Processando linha:", count)
 				}
 			}
-			ch <- record
+			//fmt.Println("Processando linha:", count)
 		}(recordLine, states, count)
 	}
 
-	go func() {
-		wg.Wait()
-		close(ch)
-	}()
-
-	// print channel results (necessary to prevent exit programm before)
-	j := 0
-	for range ch {
-		j++
-		//fmt.Printf("\r\t\t\t\t | done %d\n", j)
-	}
+	wg.Wait()
 
 	fmt.Println("Numero de registros analisados:", count)
 

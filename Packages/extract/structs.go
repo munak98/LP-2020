@@ -3,9 +3,9 @@ package extract
 //State - Estrutura de Estado (UF)
 type State struct {
 	Sigla      string
-	Codigo 		 int
+	Code 	   int
 	Total      int
-	Scores		 [4][]float64
+	Scores	   [4][]float64
 	Medias     [4]float64
 	Races      [6]Race // 6 raças ao total
 	SchoolType [4]int
