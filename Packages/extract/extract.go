@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
-	"sync"
 	"time"
 )
 
@@ -46,24 +45,9 @@ func Data(reader *csv.Reader, states []State) []State {
 		// fmt.Println("Processando linha:", count)
 
 	}
-	fmt.Println("Numero de registros analisados:", count)
+	// fmt.Println("\nNumero de registros analisados:", count)
 
-	for i := range states {
-
-		states[i].Medias = getMeanScores(states[i].Scores)
-
-		for j := range states[i].Races {
-			states[i].Races[j].Medias = getMeanScores(states[i].Races[j].Scores)
-		}
-
-		// Printa todas UFs
-		// PrintUFMeanScores(states[i])
-		// PrintRacesMeanScores(states[i])
-	}
-
-	// printa apenas do DF
-	// PrintUFMeanScores(states[6])
-	// PrintRacesMeanScores(states[6])
+	getStatesMeanScores(&states)
 
 	return states
 }
@@ -71,7 +55,7 @@ func Data(reader *csv.Reader, states []State) []State {
 /* COM PARALELISMO */
 
 //DataPallel pega os dados de Medias das notas de uma UF do arquivo CSV
-func DataPallel(reader *csv.Reader, states []State) {
+func DataPallel(reader *csv.Reader, states *[]State, finished chan bool) {
 
 	now := time.Now()
 	// defer - Espera todos processos finalizarem
@@ -81,13 +65,13 @@ func DataPallel(reader *csv.Reader, states []State) {
 
 	count := 0
 
-	ch := make(chan bool)
+	// ch := make(chan bool)
+	// var wg sync.WaitGroup
 
-	var wg sync.WaitGroup
-
+	// vai rodando no background..
 	go func() {
 		// leitura de linha a linha do registro
-		for i := 0; i < 50; i++ {
+		for /* i := 0; i < 50; i++ */ {
 			recordLine, err := reader.Read()
 
 			if err == io.EOF {
@@ -95,52 +79,39 @@ func DataPallel(reader *csv.Reader, states []State) {
 			} else if err != nil { //checa por outros erros
 				fmt.Println("An error encountered ::", err)
 			}
-
 			count++
-			defer wg.Done()
-			wg.Add(1)
 
-			for i := range states {
-				if states[i].Sigla == recordLine[5] {
+			// defer wg.Done()
+			// wg.Add(1)
 
-					states[i].Total++
+			for i := range *states {
+				if (*states)[i].Sigla == recordLine[5] {
+
+					(*states)[i].Total++
 
 					// coleta as notas de cada area da UF
-					getUFScores(recordLine, &states[i])
+					getUFScores(recordLine, &(*states)[i])
 
 					// coleta dados de cada area por raça da UF
-					getRacesData(recordLine, &states[i])
+					getRacesData(recordLine, &(*states)[i])
 
-					fmt.Println("Processando linha:", count)
+					// fmt.Println("Processando linha:", count)
 				}
 			}
-			ch <- true
+			// ch <- true
 		}
 	}()
 
-	go func() {
-		wg.Wait()
-		close(ch)
-	}()
+	// go func() {
+	// 	wg.Wait()
+	// 	close(ch)
+	// }()
 
 	fmt.Println("Numero de registros analisados:", count)
 
-	for i := range states {
+	getStatesMeanScores(states)
 
-		states[i].Medias = getMeanScores(states[i].Scores)
-
-		for j := range states[i].Races {
-			states[i].Races[j].Medias = getMeanScores(states[i].Races[j].Scores)
-		}
-
-		// Printa todas UFs
-		// PrintUFMeanScores(states[i])
-		// PrintRacesMeanScores(states[i])
-	}
-
-	// printa apenas do DF
-	PrintUFMeanScores(states[6])
-	PrintRacesMeanScores(states[6])
+	finished <- true
 
 	return
 }

@@ -19,7 +19,7 @@ func getIntValue(recordLine []string, campo int) int {
 	return i
 }
 
-func getScores(recordLine []string, scores [4][]float64) [4][]float64{ 
+func getScores(recordLine []string, scores [4][]float64) [4][]float64 {
 	scores[0] = append(scores[0], getScore(recordLine, 91)) // Ciencias da Natureza - campo 91
 	scores[1] = append(scores[1], getScore(recordLine, 92)) // Ciencias Humanas - campo 92
 	scores[2] = append(scores[2], getScore(recordLine, 93)) // Linguagens e Código - campo 93
@@ -51,11 +51,20 @@ func getMeanScores(scores [4][]float64) [4]float64 {
 	return meanScores
 }
 
-// Pega os dados de cada Raça e poe na estrutura Estado
-func getRacesData(
-	recordLine []string,
-	s *State,
-) {
+// Pega as medias das notas de cada area de conhecimento e por raça de todos Estados
+func getStatesMeanScores(states *[]State)  {
+	for i := range *states {
+		(*states)[i].Medias = getMeanScores((*states)[i].Scores)
+
+		for j := range (*states)[i].Races {
+			(*states)[i].Races[j].Medias = getMeanScores((*states)[i].Races[j].Scores)
+		}
+	}
+	return
+}
+
+// Pega os dados de cada tipo de Raça
+func getRacesData(recordLine []string, s *State) {
 
 	// Tipo de cor/raça - campo 9
 	raceType := getIntValue(recordLine, 9)
@@ -64,41 +73,23 @@ func getRacesData(
 	schoolType := getIntValue(recordLine, 17)
 
 	switch raceType {
-	case 0:
-		s.Races[0].Total++ // Não informado
-		getRaceScores(recordLine, s, raceType)
-		getSchoolType(s, raceType, schoolType)
-
+	case 0: // Não informado
+		getRaceTypeData(recordLine, s, raceType, schoolType)
 		break
-	case 1:
-		s.Races[1].Total++ // Branca
-		getRaceScores(recordLine, s, raceType)
-		getSchoolType(s, raceType, schoolType)
-
+	case 1: // Branca
+		getRaceTypeData(recordLine, s, raceType, schoolType)
 		break
-	case 2:
-		s.Races[2].Total++ // Preta
-		getRaceScores(recordLine, s, raceType)
-		getSchoolType(s, raceType, schoolType)
-
+	case 2: // Preta
+		getRaceTypeData(recordLine, s, raceType, schoolType)
 		break
-	case 3:
-		s.Races[3].Total++ // Parda
-		getRaceScores(recordLine, s, raceType)
-		getSchoolType(s, raceType, schoolType)
-
+	case 3: // Parda
+		getRaceTypeData(recordLine, s, raceType, schoolType)
 		break
-	case 4:
-		s.Races[4].Total++ // Amarela
-		getRaceScores(recordLine, s, raceType)
-		getSchoolType(s, raceType, schoolType)
-
+	case 4: // Amarela
+		getRaceTypeData(recordLine, s, raceType, schoolType)
 		break
-	case 5:
-		s.Races[5].Total++ // Indigena
-		getRaceScores(recordLine, s, raceType)
-		getSchoolType(s, raceType, schoolType)
-
+	case 5: // Indigena
+		getRaceTypeData(recordLine, s, raceType, schoolType)
 		break
 	default:
 		fmt.Println("Raça não reconhecida, possível E.T!")
@@ -108,7 +99,14 @@ func getRacesData(
 	return
 }
 
-// pega os tipos de escola
+// Pega os dados de uma Raça
+func getRaceTypeData(recordLine []string, s *State, raceType int, schoolType int) {
+	s.Races[raceType].Total++
+	getRaceScores(recordLine, s, raceType)
+	getSchoolType(s, raceType, schoolType)
+}
+
+// pega os dados para cada tipo de escola
 func getSchoolType(s *State, raceType int, schoolType int) {
 
 	switch schoolType {
@@ -134,6 +132,7 @@ func getSchoolType(s *State, raceType int, schoolType int) {
 	}
 }
 
+//! Pega os dados liha a linha do csv - em construção
 func getData(
 	reader *csv.Reader,
 	states []State,
@@ -155,7 +154,7 @@ func getData(
 			}
 
 			count++
-			
+
 			for i := range states {
 				if states[i].Sigla == recordLine[5] {
 

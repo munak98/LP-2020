@@ -9,7 +9,7 @@ import (
 func main() {
 
 	// cria um canal para goroutine
-	// finished := make(chan bool)	
+	finished := make(chan bool)	
 	
 	reader := extract.CsvReader()
 
@@ -28,10 +28,14 @@ func main() {
 
 		break
 	case 2:
-		extract.DataPallel(reader, states)
+
+		// cria um canal para goroutine
+		//statesChannel := make(chan []extract.State)
+
+		go extract.DataPallel(reader, &states, finished)
 
 		// recebe 
-		// <-finished
+		<-finished
 		
 		break
 	default:
