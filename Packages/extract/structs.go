@@ -3,9 +3,9 @@ package extract
 //State - Estrutura de Estado (UF)
 type State struct {
 	Sigla      string
-	Code 	   int
+	Code       int
 	Total      int
-	Scores	   [4][]float64
+	Scores     [4][]float64 // 4 areas de conhecimento
 	Medias     [4]float64
 	Races      [6]Race // 6 raças ao total
 	SchoolType [4]int
@@ -16,7 +16,7 @@ type Race struct {
 	Name       string
 	RaceType   int
 	Total      int
-	Scores		 [4][]float64
+	Scores     [4][]float64
 	Medias     [4]float64
 	SchoolType [4]int
 }
@@ -24,7 +24,7 @@ type Race struct {
 //NewStates construtor de array de Estruturas de Estado (UF)
 func NewStates() []State {
 
-	siglas := []string{"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", 
+	siglas := []string{"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG",
 		"PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"}
 
 	// gera array de estruturas de Estado (UFs)

@@ -3,7 +3,6 @@ package extract
 import (
 	"fmt"
 	"io"
-	"sync"
 	"time"
 )
 
@@ -17,11 +16,13 @@ func Data(states []State) []State {
 		fmt.Println("\n\nTempo de execução:", time.Since(now))
 	}()
 
-	reader := CsvReader()
+	fmt.Println("Extraindo dados..")
+
+	reader, _ := CsvReader()
 	count := 0
 
 	// leitura de linha a linha do registro
-	for i := 0; i < 500000; i++ {
+	for /* i := 0; i < 500000; i++ */ {
 		recordLine, err := reader.Read()
 
 		if err == io.EOF {
@@ -55,57 +56,33 @@ func Data(states []State) []State {
 
 /* COM PARALELISMO */
 
-//DataPallel pega os dados de todos Estados do arquivo CSV
-func DataPallel(states *[]State) {
+//DataParallel pega os dados de todos Estados do arquivo CSV
+func DataParallel(states *[]State) {
 
 	start := time.Now()
 	defer func() {
 		fmt.Println("\n\nTempo de execução:", time.Since(start))
 	}()
 
-	reader := CsvReader()
-	var wg sync.WaitGroup
+	fmt.Println("Extraindo dados..")
+
 	count := 0
+	reader, _ := CsvReader()
 
-	// leitura de linha a linha do registro
-	for  i := 0; i < 500000; i++  {
-		recordLine, err := reader.Read()
+	// fileSize := int(fileInfo.Size())
+	// fmt.Println("Filinfo size: ", fileSize)
 
-		if err == io.EOF {
-			break // chegou ao final do registro
-		} else if err != nil { //checa por outros erros
-			fmt.Println("An error encountered ::", err)
-		}
-		count++
-		wg.Add(1)
+	//* total de registros - Roubado rs
+	const totalRecords = 5095271
+	divisor := 29
 
-		go func(record []string, states *[]State, count int) {
-			defer wg.Done()
-			for i := range *states {
-
-				if (*states)[i].Sigla == recordLine[5] {
-
-					(*states)[i].Total++
-
-					// coleta as notas de cada area da UF
-					getUFScores(recordLine, &(*states)[i])
-
-					// coleta dados de cada area por raça da UF
-					getRacesData(recordLine, &(*states)[i])
-
-				}
-			}
-			//fmt.Println("Processando linha:", count)
-		}(recordLine, states, count)
+	for i := 0; i < divisor; i++ {
+		getData(reader, states, &count, totalRecords/divisor*i, totalRecords/divisor*(i+1))
 	}
-
-	wg.Wait()
 
 	fmt.Println("Numero de registros analisados:", count)
 
 	getStatesMeanScores(states)
-
-	//finished <- true
 
 	return
 }

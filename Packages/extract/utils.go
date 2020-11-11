@@ -4,27 +4,65 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"log"
 	"os"
+	"os/exec"
+	"sync"
 	"time"
 
 	"golang.org/x/text/encoding/charmap"
 )
 
 // CsvReader faz a leitura do arquivo csv
-func CsvReader() *csv.Reader {
+func CsvReader() (*csv.Reader, os.FileInfo) {
 
 	csvFilePath := "../microdados_enem_2019/DADOS/MICRODADOS_ENEM_2019.csv"
-	fmt.Printf("FilePath: %s\n", csvFilePath)
+	// fmt.Printf("FilePath: %s\n", csvFilePath)
 
 	csvFile, err := os.Open(csvFilePath)
-	if err != nil { // chaca se ocorre erros na abertura do csv
+	if err != nil { // checa se ocorre erros na abertura do csv
+		fmt.Println("An error encountered ::", err)
+	}
+
+	fileInfo, err := csvFile.Stat()
+	if err != nil {
 		fmt.Println("An error encountered ::", err)
 	}
 
 	reader := csv.NewReader(charmap.ISO8859_1.NewDecoder().Reader(csvFile))
 	reader.Comma = ';'
 
-	return reader
+	return reader, fileInfo
+}
+
+//GetFilesContents le varios arquivos de forma concorrente e retorna em um map
+func GetFilesContents(files ...string) map[string][]byte {
+	var wg sync.WaitGroup
+	var m sync.Mutex
+
+	filesLength := len(files)
+	contents := make(map[string][]byte, filesLength)
+	wg.Add(filesLength)
+
+	for _, file := range files {
+		go func(file string) {
+			content, err := ioutil.ReadFile(file)
+
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			m.Lock()
+			contents[file] = content
+			m.Unlock()
+			wg.Done()
+		}(file)
+	}
+
+	wg.Wait()
+
+	return contents
 }
 
 // Contains verifica se existe string na propiedade sigla de states
@@ -49,73 +87,48 @@ func MeasureTime() {
 
 //Menu para escolher quais dados mostrar
 func Menu(states []State) {
-	UFs := []string{"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", 
-		"PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"}
-	fmt.Println("\n\nEscolha de qual UF deseja extrair dados: ")
-	for i := range UFs {
-		fmt.Printf("%s ", UFs[i])
-	}
-	fmt.Print("\n-> ")
 
-	var UF string
-	fmt.Scan(&UF)
-
-	// verifica se existe UF no arrays de structs states
-	if Contains(states, UF) == true {
-
+	for {
+		fmt.Println("\n\nEscolha de qual UF deseja visualizar dados: ")
+		fmt.Printf("Digite 0 para sair\n\n")
 		for i := range states {
-			if UF == states[i].Sigla{
-				PrintUFMeanScores(states[i])
-				PrintRacesMeanScores(states[i])
+			fmt.Printf("%s ", states[i].Sigla)
+		}
+		fmt.Print("\n-> ")
+
+		var UF string
+		fmt.Scan(&UF)
+
+		// verifica se existe UF no arrays de structs states
+		if Contains(states, UF) == true {
+
+			for i := range states {
+				if UF == states[i].Sigla {
+					PrintUFMeanScores(states[i])
+					PrintRacesMeanScores(states[i])
+				}
 			}
+
+		} else if UF == "0" {
+			break
+		} else {
+			fmt.Print("UF digitada inválida!")
 		}
 
-	}else {
-		fmt.Print("UF digitada inválida!")
+		UF = ""
+
+		// tentativa de clear screen
+		c := exec.Command("cls")
+		c.Stdout = os.Stdout
+		c.Run()
 	}
-}
-
-// printa dados acerca da UF
-func PrintUFMeanScores(state State) {
-	fmt.Println("---------------------------------------")
-	fmt.Printf("\nDados de %s", state.Sigla)
-	fmt.Printf("\nTotal de participantes: %d\n", state.Total)
-	fmt.Println("Médias:")
-
-	fmt.Printf("\tCiências da natureza: %.2f \n\tCiências humanas: %.2f \n\tLinguagens e códigos: %.2f\n\tMatemática: %.2f\n\n",
-		state.Medias[0],
-		state.Medias[1],
-		state.Medias[2],
-		state.Medias[3],
-	)
-
-	fmt.Printf("Numero de participantes de Escola Publica: %d\n", state.SchoolType[1])
-	fmt.Printf("Numero de participantes de Escola Privada: %d\n", state.SchoolType[2])
-}
-
-// printa dados acerca de cada raça
-func PrintRacesMeanScores(state State) {
-
-	for i := range state.Races {
-		fmt.Println("---------------------------------------")
-		fmt.Printf("\nDados de %s", state.Races[i].Name)
-		fmt.Printf("\nTotal de participantes: %d\n", state.Races[i].Total)
-		fmt.Printf("Médias: \n\tCiências da natureza: %.2f \n\tCiências humanas: %.2f \n\tLinguagens e códigos: %.2f\n\tMatemática: %.2f\n\n",
-			state.Races[i].Medias[0],
-			state.Races[i].Medias[1],
-			state.Races[i].Medias[2],
-			state.Races[i].Medias[3],
-		)
-		fmt.Printf("Numero de participantes de Escola Publica: %d\n", state.Races[i].SchoolType[1])
-		fmt.Printf("Numero de participantes de Escola Privada: %d\n", state.Races[i].SchoolType[2])
-	}
-
 }
 
 // pega o total de registros do arquivo CSV
-// cuidado ao usar pois ao percorrer todo CSV, 
-// tem que reler para percorrer de novo
-func totalRecords(reader *csv.Reader) int {
+func totalRecords() int {
+
+	reader, _ := CsvReader()
+
 	count := 0
 	// leitura de linha a linha do registro
 	for {
