@@ -1,6 +1,24 @@
-# LP-2020
 
-Projeto de Linguagens de Programação, UnB, semestre 01/2020.
+# Projeto LP-2020-UnB
+
+Projeto consiste em analisar dados sobre o ENEM de 2019 de todos estados do Brasil, através dos microdados 
+fornecidos pelo inep, os dados coletados são:
+
+### Análise Estadual
+
+- Número de participantes 
+- Médias de cada área de conhecimento 
+- Número de participantes de Escola Pública e Privada
+
+### Análise por raça
+
+- Número de participantes de cada raça 
+- Médias por área de conhecimento de cada raça
+- Número de participantes de Escola Pública e Privada de cada raça
+
+Objetivo é demonstrar os diferenciais e pontos fortes da linguagem Golang, 
+ao realizar a leitura dos microdados e armazenamento dos dados obtidos utilizando 
+processos de execuções paralelas, buscando obter um menor tempo de execução e melhor performance.
 
 ## Pré-requisitos
 

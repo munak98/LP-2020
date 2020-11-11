@@ -56,6 +56,7 @@ func Data(states []State) []State {
 
 /* COM PARALELISMO */
 
+
 //DataParallel pega os dados de todos Estados do arquivo CSV
 func DataParallel(states *[]State) {
 
@@ -63,6 +64,7 @@ func DataParallel(states *[]State) {
 	defer func() {
 		fmt.Println("\n\nTempo de execução:", time.Since(start))
 	}()
+
 
 	fmt.Println("Extraindo dados..")
 
@@ -72,7 +74,7 @@ func DataParallel(states *[]State) {
 	// fileSize := int(fileInfo.Size())
 	// fmt.Println("Filinfo size: ", fileSize)
 
-	//* total de registros - Roubado rs
+	//* total de registros
 	const totalRecords = 5095271
 	divisor := 29
 
@@ -80,9 +82,12 @@ func DataParallel(states *[]State) {
 		getData(reader, states, &count, totalRecords/divisor*i, totalRecords/divisor*(i+1))
 	}
 
+	wg.Wait()
+	
 	fmt.Println("Numero de registros analisados:", count)
 
 	getStatesMeanScores(states)
 
 	return
 }
+
