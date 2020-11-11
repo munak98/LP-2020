@@ -56,7 +56,6 @@ func Data(states []State) []State {
 
 /* COM PARALELISMO */
 
-
 //DataParallel pega os dados de todos Estados do arquivo CSV
 func DataParallel(states *[]State) {
 
@@ -64,7 +63,6 @@ func DataParallel(states *[]State) {
 	defer func() {
 		fmt.Println("\n\nTempo de execução:", time.Since(start))
 	}()
-
 
 	fmt.Println("Extraindo dados..")
 
@@ -81,8 +79,6 @@ func DataParallel(states *[]State) {
 	for i := 0; i < divisor; i++ {
 		getData(reader, states, &count, totalRecords/divisor*i, totalRecords/divisor*(i+1))
 	}
-
-	wg.Wait()
 	
 	fmt.Println("Numero de registros analisados:", count)
 
