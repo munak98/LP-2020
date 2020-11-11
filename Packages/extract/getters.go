@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"strconv"
+	"sync"
 
 	"github.com/montanaflynn/stats"
 )
@@ -52,7 +53,7 @@ func getMeanScores(scores [4][]float64) [4]float64 {
 }
 
 // Pega as medias das notas de cada area de conhecimento e por raça de todos Estados
-func getStatesMeanScores(states *[]State)  {
+func getStatesMeanScores(states *[]State) {
 	for i := range *states {
 		(*states)[i].Medias = getMeanScores((*states)[i].Scores)
 
@@ -132,19 +133,23 @@ func getSchoolType(s *State, raceType int, schoolType int) {
 	}
 }
 
-//! Pega os dados liha a linha do csv - em construção
+//GetData Pega os dados de forma paralela, lendo pedaços do arquivo
 func getData(
 	reader *csv.Reader,
-	states []State,
-	scoresUF *[4][]float64,
-	scoresPerRace *[6][4][]float64,
-	done chan bool,
+	states *[]State,
+	count *int,
+	begin int,
+	end int,
 ) {
 
-	count := 0
+	var wg sync.WaitGroup
+	wg.Add(1)
 
 	go func() {
-		for /* i := begin; true ;i++ */ {
+		defer wg.Done()
+
+		// leitura de pedaços do csv paralelamente
+		for i := begin; i < end; i++ {
 			recordLine, err := reader.Read()
 
 			if err == io.EOF {
@@ -152,23 +157,22 @@ func getData(
 			} else if err != nil { //checa por outros erros
 				fmt.Println("An error encountered ::", err)
 			}
+			*count++
 
-			count++
+			for i := range *states {
+				if (*states)[i].Sigla == recordLine[5] {
 
-			for i := range states {
-				if states[i].Sigla == recordLine[5] {
-
-					states[i].Total++
+					(*states)[i].Total++
 
 					// coleta as notas de cada area da UF
-					getUFScores(recordLine, &states[i])
+					getUFScores(recordLine, &(*states)[i])
 
 					// coleta dados de cada area por raça da UF
-					getRacesData(recordLine, &states[i])
+					getRacesData(recordLine, &(*states)[i])
 				}
 			}
 		}
 	}()
 
-	done <- true // recebe true no canal
+	wg.Wait()
 }
