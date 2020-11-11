@@ -25,8 +25,8 @@ func main() {
 		break
 	case 2:
 
-		extract.DataPallel(&states)
-		
+		extract.DataParallel(&states)
+
 		break
 	default:
 		fmt.Println("Opção Inválida!")
