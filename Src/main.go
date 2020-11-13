@@ -15,7 +15,7 @@ func init() {
 func main() {
 
 	states := extract.NewStates()
-
+//em go as variaveis sempre são iniciadas em zero, então neste caso podemos colocar "var opcao int" 
 	opcao := 0
 	fmt.Println("Escolha uma opção para extrair dados:")
 	fmt.Printf("Digite 0 para sair\n\n")
