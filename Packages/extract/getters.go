@@ -20,24 +20,31 @@ func getIntValue(recordLine []string, campo int) int {
 	return i
 }
 
-func getScores(recordLine []string, scores [4][]float64) [4][]float64 {
-	scores[0] = append(scores[0], getScore(recordLine, 91)) // Ciencias da Natureza - campo 91
-	scores[1] = append(scores[1], getScore(recordLine, 92)) // Ciencias Humanas - campo 92
-	scores[2] = append(scores[2], getScore(recordLine, 93)) // Linguagens e Código - campo 93
-	scores[3] = append(scores[3], getScore(recordLine, 94)) // Matemática - campo 94
+func getScores(recordLine []string, scores [4][]float64, year int) [4][]float64 {
+	if year == 2{
+		scores[0] = append(scores[0], getScore(recordLine, 91)) // Ciencias da Natureza - campo 91
+		scores[1] = append(scores[1], getScore(recordLine, 92)) // Ciencias Humanas - campo 92
+		scores[2] = append(scores[2], getScore(recordLine, 93)) // Linguagens e Código - campo 93
+		scores[3] = append(scores[3], getScore(recordLine, 94)) // Matemática - campo 94
+	}	else{
+		scores[0] = append(scores[0], getScore(recordLine, 90)) // Ciencias da Natureza - campo 90
+		scores[1] = append(scores[1], getScore(recordLine, 91)) // Ciencias Humanas - campo 91
+		scores[2] = append(scores[2], getScore(recordLine, 92)) // Linguagens e Código - campo 92
+		scores[3] = append(scores[3], getScore(recordLine, 93)) // Matemática - campo 93
+	}
 
 	return scores
 }
 
 // Pega as notas de areas de conhecimento de cada UF
-func getUFScores(recordLine []string, state *State) {
-	state.Scores = getScores(recordLine, state.Scores)
+func getUFScores(recordLine []string, state *State, year int) {
+	state.Scores = getScores(recordLine, state.Scores, year)
 	return
 }
 
 // Pega as notas de areas de conhecimento de Cada Raça
-func getRaceScores(recordLine []string, state *State, raceType int) {
-	state.Races[raceType].Scores = getScores(recordLine, state.Races[raceType].Scores)
+func getRaceScores(recordLine []string, state *State, raceType int, year int) {
+	state.Races[raceType].Scores = getScores(recordLine, state.Races[raceType].Scores, year)
 	return
 }
 
@@ -64,8 +71,47 @@ func getStatesMeanScores(states *[]State) {
 	return
 }
 
+func getSchoolScores(recordLine []string, scores *SchoolScores, year int) {
+	if getIntValue(recordLine, 17) == 1{
+		scores.Public = getScores(recordLine, scores.Public, year)
+	}
+	if getIntValue(recordLine, 17) == 2{
+		scores.Private = getScores(recordLine, scores.Private, year)
+	}
+	return
+}
+
+func getGeneralRaceScores(recordLine []string, scores *RaceScores, year int) {
+	raceType := getIntValue(recordLine, 9)
+	switch raceType {
+	case 0: // Não informado
+		scores.NaoDeclarada = getScores(recordLine, scores.NaoDeclarada, year)
+		break
+	case 1: // Branca
+		scores.BrcPrdAmar = getScores(recordLine, scores.BrcPrdAmar, year)
+		break
+	case 2: // Preta
+		scores.Preta = getScores(recordLine, scores.Preta, year)
+		break
+	case 3: // Parda
+		scores.BrcPrdAmar = getScores(recordLine, scores.BrcPrdAmar, year)
+		break
+	case 4: // Amarela
+		scores.BrcPrdAmar = getScores(recordLine, scores.BrcPrdAmar, year)
+		break
+	case 5: // Indigena
+		scores.Indigena = getScores(recordLine, scores.Indigena, year)
+		break
+	default:
+		fmt.Println("Raça não reconhecida.")
+		break
+	}
+
+	return
+}
+
 // Pega os dados de cada tipo de Raça
-func getRacesData(recordLine []string, s *State) {
+func getRacesData(recordLine []string, s *State, year int) {
 
 	// Tipo de cor/raça - campo 9
 	raceType := getIntValue(recordLine, 9)
@@ -75,22 +121,22 @@ func getRacesData(recordLine []string, s *State) {
 
 	switch raceType {
 	case 0: // Não informado
-		getRaceTypeData(recordLine, s, raceType, schoolType)
+		getRaceTypeData(recordLine, s, raceType, schoolType, year)
 		break
 	case 1: // Branca
-		getRaceTypeData(recordLine, s, raceType, schoolType)
+		getRaceTypeData(recordLine, s, raceType, schoolType, year)
 		break
 	case 2: // Preta
-		getRaceTypeData(recordLine, s, raceType, schoolType)
+		getRaceTypeData(recordLine, s, raceType, schoolType, year)
 		break
 	case 3: // Parda
-		getRaceTypeData(recordLine, s, raceType, schoolType)
+		getRaceTypeData(recordLine, s, raceType, schoolType, year)
 		break
 	case 4: // Amarela
-		getRaceTypeData(recordLine, s, raceType, schoolType)
+		getRaceTypeData(recordLine, s, raceType, schoolType, year)
 		break
 	case 5: // Indigena
-		getRaceTypeData(recordLine, s, raceType, schoolType)
+		getRaceTypeData(recordLine, s, raceType, schoolType, year)
 		break
 	default:
 		fmt.Println("Raça não reconhecida, possível E.T!")
@@ -101,9 +147,9 @@ func getRacesData(recordLine []string, s *State) {
 }
 
 // Pega os dados de uma Raça
-func getRaceTypeData(recordLine []string, s *State, raceType int, schoolType int) {
+func getRaceTypeData(recordLine []string, s *State, raceType int, schoolType int, year int) {
 	s.Races[raceType].Total++
-	getRaceScores(recordLine, s, raceType)
+	getRaceScores(recordLine, s, raceType, year)
 	getSchoolType(s, raceType, schoolType)
 }
 
@@ -111,24 +157,25 @@ func getRaceTypeData(recordLine []string, s *State, raceType int, schoolType int
 func getSchoolType(s *State, raceType int, schoolType int) {
 
 	switch schoolType {
-	case 0: // Nao respondeu
+	case 1: // Nao respondeu
 		s.SchoolType[0]++
 		s.Races[raceType].SchoolType[0]++
 		break
-	case 1: // Publica
+	case 2: // Publica
 		s.SchoolType[1]++
 		s.Races[raceType].SchoolType[1]++
 		break
-	case 2: // Privada
+	case 3: // Privada
 		s.SchoolType[2]++
 		s.Races[raceType].SchoolType[2]++
 		break
-	case 3: // Exterior
+	case 4: // Exterior
 		s.SchoolType[3]++
 		s.Races[raceType].SchoolType[3]++
 		break
 	default:
-		fmt.Println("Algo errado, tipo de escola Invalido!")
+		fmt.Println("Algo errado, tipo de escola Inválido!")
+		fmt.Println("%d", schoolType)
 		break
 	}
 }
@@ -137,9 +184,12 @@ func getSchoolType(s *State, raceType int, schoolType int) {
 func getData(
 	reader *csv.Reader,
 	states *[]State,
+	schoolScores *SchoolScores,
+	raceScores *RaceScores,
 	count *int,
 	begin int,
 	end int,
+	year int,
 ) {
 
 	var wg sync.WaitGroup
@@ -159,16 +209,20 @@ func getData(
 			}
 			*count++
 
+			getGeneralRaceScores(recordLine, raceScores, year)
+
+			getSchoolScores(recordLine, schoolScores, year)
+
 			for i := range *states {
 				if (*states)[i].Sigla == recordLine[5] {
 
 					(*states)[i].Total++
 
 					// coleta as notas de cada area da UF
-					getUFScores(recordLine, &(*states)[i])
+					getUFScores(recordLine, &(*states)[i], year)
 
 					// coleta dados de cada area por raça da UF
-					getRacesData(recordLine, &(*states)[i])
+					getRacesData(recordLine, &(*states)[i], year)
 				}
 			}
 		}

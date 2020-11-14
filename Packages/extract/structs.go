@@ -21,6 +21,18 @@ type Race struct {
 	SchoolType [4]int
 }
 
+type SchoolScores struct {
+	Public [4][]float64
+	Private [4][]float64
+}
+
+type RaceScores struct {
+	NaoDeclarada [4][]float64
+	Preta [4][]float64
+	BrcPrdAmar [4][]float64
+	Indigena [4][]float64
+}
+
 //NewStates construtor de array de Estruturas de Estado (UF)
 func NewStates() []State {
 

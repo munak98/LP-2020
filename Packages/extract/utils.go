@@ -15,11 +15,7 @@ import (
 )
 
 // CsvReader faz a leitura do arquivo csv
-func CsvReader() (*csv.Reader, os.FileInfo) {
-
-	csvFilePath := "../microdados_enem_2019/DADOS/MICRODADOS_ENEM_2019.csv"
-	// fmt.Printf("FilePath: %s\n", csvFilePath)
-
+func CsvReader(csvFilePath string) (*csv.Reader, os.FileInfo) {
 	csvFile, err := os.Open(csvFilePath)
 	if err != nil { // checa se ocorre erros na abertura do csv
 		fmt.Println("An error encountered ::", err)
@@ -85,11 +81,49 @@ func MeasureTime() {
 	}()
 }
 
+func MenuRaces(states State) {
+	fmt.Printf("\n\nDeseja visualizar dados por raça nesse estado? (s/n)")
+	fmt.Print("\n-> ")
+	var opcao string
+	fmt.Scan(&opcao)
+
+	if opcao == "n"{
+		return
+	}
+	for {
+		fmt.Println("\nEscolha a raça.")
+		fmt.Println("Digite 0 para sair.\n")
+		fmt.Printf("1-Não declarada\n2-Branca\n3-Preta\n4-Parda\n5-Amarela\n6-Indígena\n")
+		fmt.Print("\n-> ")
+
+		var raca int
+		fmt.Scan(&raca)
+
+		if raca == 0{
+			break
+		}
+		if raca > 6{
+			fmt.Println("Opção inválida.")
+		}
+		PrintRacesMeanScores(states, raca-1)
+
+	}
+}
+
+
 //Menu para escolher quais dados mostrar
 func Menu(states []State) {
+	fmt.Printf("\n\nDeseja visualizar dados de uma UF específica? (s/n)")
+	fmt.Print("\n-> ")
+	var opcao string
+	fmt.Scan(&opcao)
+
+	if opcao == "n"{
+		return
+	}
 
 	for {
-		fmt.Println("\n\nEscolha de qual UF deseja visualizar dados: ")
+		fmt.Println("\nEscolha a UF: ")
 		fmt.Printf("Digite 0 para sair\n\n")
 		for i := range states {
 			fmt.Printf("%s ", states[i].Sigla)
@@ -105,7 +139,9 @@ func Menu(states []State) {
 			for i := range states {
 				if UF == states[i].Sigla {
 					PrintUFMeanScores(states[i])
-					PrintRacesMeanScores(states[i])
+					MenuRaces(states[i])
+					fmt.Println("---------------------------------------")
+					// PrintRacesMeanScores(states[i])
 				}
 			}
 
@@ -124,10 +160,51 @@ func Menu(states []State) {
 	}
 }
 
-// pega o total de registros do arquivo CSV
-func totalRecords() int {
+func YearsMenu(states19 []State, states18 []State, states17 []State, school *[3]SchoolScores, race *[3]RaceScores) {
 
-	reader, _ := CsvReader()
+	for {
+		fmt.Println("Escolha o ano.")
+		fmt.Printf("Digite 0 para sair\n\n")
+
+		fmt.Printf("1-Enem 2017\n2-Enem 2018\n3-Enem 2019\n")
+
+		fmt.Print("\n-> ")
+
+		var year int
+		fmt.Scan(&year)
+
+		fmt.Printf("\n*****************************************\n")
+		// verifica se existe UF no arrays de structs states
+		switch year {
+				case 0:
+					break
+				case 1:
+					fmt.Printf("Dados nacionais Enem 2017\n")
+					ShowGeneralRace((*race)[0])
+					ShowGeneralSchools((*school)[0])
+					Menu(states17)
+				case 2:
+					fmt.Printf("Dados nacionais Enem 2018\n")
+					ShowGeneralRace((*race)[1])
+					ShowGeneralSchools((*school)[1])
+					Menu(states18)
+				case 3:
+					fmt.Printf("Dados nacionais Enem 2019\n")
+					ShowGeneralRace((*race)[2])
+					ShowGeneralSchools((*school)[2])
+					Menu(states19)
+				default:
+					fmt.Print("Opção inválida!")
+		}
+		fmt.Printf("\n*****************************************\n")
+	}
+}
+
+
+// pega o total de registros do arquivo CSV
+func totalRecords(csvFilePath string) int {
+
+	reader, _ := CsvReader(csvFilePath)
 
 	count := 0
 	// leitura de linha a linha do registro

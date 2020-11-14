@@ -3,26 +3,18 @@ package extract
 import (
 	"fmt"
 	"io"
-	"time"
 )
 
 /* SEM PARALELISMO */
 
 //Data pega os dados de todos Estados do arquivo CSV
-func Data(states []State) []State {
+func Data(states []State, school *[3]SchoolScores, race *[3]RaceScores, csvFilePath string, count *int) []State {
 
-	now := time.Now()
-	defer func() {
-		fmt.Println("\n\nTempo de execução:", time.Since(now))
-	}()
 
-	fmt.Println("Extraindo dados..")
-
-	reader, _ := CsvReader()
-	count := 0
+	reader, _ := CsvReader(csvFilePath)
 
 	// leitura de linha a linha do registro
-	for /* i := 0; i < 500000; i++ */ {
+	for {
 		recordLine, err := reader.Read()
 
 		if err == io.EOF {
@@ -30,7 +22,25 @@ func Data(states []State) []State {
 		} else if err != nil { //checa por outros erros
 			fmt.Println("An error encountered ::", err)
 		}
-		count++
+		*count++
+		var year int
+		if csvFilePath == "../microdados_enem_2019/DADOS/MICRODADOS_ENEM_2019.csv"{
+			year = 2
+			getGeneralRaceScores(recordLine, &(*race)[2], year)
+			getSchoolScores(recordLine, &(*school)[2], year)
+		}
+		if csvFilePath == "../microdados_enem_2018/DADOS/MICRODADOS_ENEM_2018.csv"{
+			year = 1
+			getGeneralRaceScores(recordLine, &(*race)[1], year)
+			getSchoolScores(recordLine, &(*school)[1], year)
+		}
+		if csvFilePath == "../microdados_enem_2017/DADOS/MICRODADOS_ENEM_2017.csv"{
+			year = 0
+			getGeneralRaceScores(recordLine, &(*race)[0], year)
+			getSchoolScores(recordLine, &(*school)[0], year)
+		}
+
+
 
 		for i := range states {
 			if states[i].Sigla == recordLine[5] {
@@ -38,16 +48,18 @@ func Data(states []State) []State {
 				states[i].Total++
 
 				// coleta as notas de cada area da UF
-				getUFScores(recordLine, &states[i])
+				getUFScores(recordLine, &states[i], year)
 
 				// coleta dados de cada area por raça da UF
-				getRacesData(recordLine, &states[i])
+				getRacesData(recordLine, &states[i], year)
 			}
+
 		}
-		//fmt.Println("Processando linha:", count)
+
 
 	}
-	fmt.Println("\nNumero de registros analisados:", count)
+
+	// fmt.Println("\nNúmero de registros analisados:", count)
 
 	getStatesMeanScores(&states)
 
@@ -57,33 +69,38 @@ func Data(states []State) []State {
 /* COM PARALELISMO */
 
 //DataParallel pega os dados de todos Estados do arquivo CSV
-func DataParallel(states *[]State) {
+func DataParallel(states *[]State, school *[3]SchoolScores, race *[3]RaceScores, csvFilePath string, count *int) {
 
-	start := time.Now()
-	defer func() {
-		fmt.Println("\n\nTempo de execução:", time.Since(start))
-	}()
 
-	fmt.Println("Extraindo dados..")
-
-	count := 0
-	reader, _ := CsvReader()
+	reader, _ := CsvReader(csvFilePath)
 
 	// fileSize := int(fileInfo.Size())
 	// fmt.Println("Filinfo size: ", fileSize)
+	var year int
 
 	//* total de registros
-	const totalRecords = 5095271
+	var totalRecords int
+	if csvFilePath == "../microdados_enem_2019/DADOS/MICRODADOS_ENEM_2019.csv"{
+		totalRecords = 5095271
+		year = 2
+	}
+	if csvFilePath == "../microdados_enem_2018/DADOS/MICRODADOS_ENEM_2018.csv"{
+		totalRecords = 5513748
+		year = 1
+	}
+	if csvFilePath == "../microdados_enem_2017/DADOS/MICRODADOS_ENEM_2017.csv"{
+		totalRecords = 6731342
+		year = 0
+	}
 	divisor := 29
 
 	for i := 0; i < divisor; i++ {
-		getData(reader, states, &count, totalRecords/divisor*i, totalRecords/divisor*(i+1))
+		getData(reader, states, &(*school)[year], &(*race)[year], count, totalRecords/divisor*i, totalRecords/divisor*(i+1), year)
 	}
-	
-	fmt.Println("Numero de registros analisados:", count)
+
+	// fmt.Println("Número de registros analisados:", count)
 
 	getStatesMeanScores(states)
 
 	return
 }
-
