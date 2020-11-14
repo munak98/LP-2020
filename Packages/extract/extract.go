@@ -20,7 +20,7 @@ func Data(years []Year) []Year {
 	fmt.Println("Extraindo dados..")
 
 	// loop pelos anos
-	for i := range years { 
+	for i := range years {
 
 		reader, _ := CsvReader(years[i].CsvFilePath)
 		count := 0
@@ -37,7 +37,7 @@ func Data(years []Year) []Year {
 			count++
 
 			// loop pelos estados
-			for j := range years[i].States { 
+			for j := range years[i].States {
 				if years[i].States[j].Sigla == recordLine[5] {
 
 					years[i].States[j].Total++
@@ -52,8 +52,9 @@ func Data(years []Year) []Year {
 
 			//fmt.Println("Processando linha:", count)
 		}
-		fmt.Println("\nNumero de registros analisados:", count)
-		count = 0	// Reseta contagem a cada ano
+
+		fmt.Printf("Numero de registros analisados de %d: %d", years[i].Year, count)
+		count = 0 // Reseta contagem a cada ano
 	}
 
 	for i := range years {
@@ -78,31 +79,29 @@ func DataParallel(years *[]Year) {
 	var wg sync.WaitGroup
 	count := 0
 
-	wg.Add(1)
+	for i := range *years {
+		reader, _ := CsvReader((*years)[i].CsvFilePath)
+		wg.Add(1)
 
-	go func() {
-		defer wg.Done()
+		// Execução paralela dos processos
+		go func(i int) {	
+			defer wg.Done()
 
-		for i := range *years {
-			
-			reader, _ := CsvReader((*years)[i].CsvFilePath)
-			
-			for j := 0; i < (*years)[i].Workers; j++ {
+			// Loop no numero de processos necessários para cada ano
+			for j := 0; j < (*years)[i].Workers; j++ {
 				getData(
-					reader, 
-					&(*years)[i].States, 
-					&count, 
-					(*years)[i].TotalRecords / (*years)[i].Workers*j, 
-					(*years)[i].TotalRecords / (*years)[i].Workers*(j+1),
+					reader,
+					&(*years)[i].States,
+					&count,
+					((*years)[i].TotalRecords/(*years)[i].Workers)*j,			// inicio do pedaço
+					((*years)[i].TotalRecords/(*years)[i].Workers)*(j+1),	// final do pedaço
 				)
 			}
-			
-			count = 0
-		}
-	}()
-		
+		}(i)
+		count = 0
+	}
+
 	wg.Wait()
-	fmt.Println("Numero de registros analisados:", count)
 
 	for i := range *years {
 		getStatesMeanScores(&(*years)[i].States)

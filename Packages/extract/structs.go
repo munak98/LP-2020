@@ -45,8 +45,8 @@ func NewYears() []Year {
 		Year:         2017,
 		States:       states17,
 		CsvFilePath:  csvFilePath17,
-		TotalRecords: 6731342,
-		Workers:      2,
+		TotalRecords: 6731342,	// total de registros
+		Workers:      2,				// numero de processos, tem que ser um divisor do total de registros
 	}
 
 	year18 := Year{

@@ -138,9 +138,11 @@ func getData(
 	reader *csv.Reader,
 	states *[]State,
 	count *int,
-	begin int,
+	start int,
 	end int,
 ) {
+
+	*count = 0
 
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -149,7 +151,7 @@ func getData(
 		defer wg.Done()
 
 		// leitura de pedaços do csv paralelamente
-		for i := begin; i < end; i++ {
+		for i := start; i < end; i++ {
 			recordLine, err := reader.Read()
 
 			if err == io.EOF {
@@ -172,7 +174,9 @@ func getData(
 				}
 			}
 		}
+		
 	}()
 
 	wg.Wait()
+
 }
