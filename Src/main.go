@@ -14,8 +14,11 @@ func init() {
 
 func main() {
 
-	states := extract.NewStates()
-//em go as variaveis sempre são iniciadas em zero, então neste caso podemos colocar "var opcao int" 
+	years := extract.NewYears()
+
+	// extract.FileInfo(years[0].CsvFilePath)
+
+	//em go as variaveis sempre são iniciadas em zero, então neste caso podemos colocar "var opcao int" 
 	opcao := 0
 	fmt.Println("Escolha uma opção para extrair dados:")
 	fmt.Printf("Digite 0 para sair\n\n")
@@ -31,20 +34,29 @@ func main() {
 		break
 	case 1:
 
-		states = extract.Data(states)
+		years = extract.Data(years)
 		break
 	case 2:
 
-		extract.DataParallel(&states)
+		extract.DataParallel(&years)
+		break
+
+	case 3:
+
+		contents := extract.GetFilesContents(years[0].CsvFilePath, years[1].CsvFilePath)
+		fmt.Println(contents)
+
 		break
 	default:
 		fmt.Println("Opção Inválida!")
 		break
 	}
 
-	extract.MostParticipantsUF(states)
+	for i := range years {
+		extract.MostParticipantsUF(years[i].States)
+	}
 
-	extract.Menu(states)
+	extract.Menu(years[2].States)
 
 	return
 }

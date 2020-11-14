@@ -15,10 +15,9 @@ import (
 )
 
 // CsvReader faz a leitura do arquivo csv
-func CsvReader() (*csv.Reader, os.FileInfo) {
+func CsvReader(csvFilePath string) (*csv.Reader, os.FileInfo) {
 
-	csvFilePath := "../microdados_enem_2019/DADOS/MICRODADOS_ENEM_2019.csv"
-	// fmt.Printf("FilePath: %s\n", csvFilePath)
+	fmt.Printf("FilePath: %s\n", csvFilePath)
 
 	csvFile, err := os.Open(csvFilePath)
 	if err != nil { // checa se ocorre erros na abertura do csv
@@ -124,12 +123,15 @@ func Menu(states []State) {
 	}
 }
 
-// pega o total de registros do arquivo CSV
-func totalRecords() int {
+//FileInfo - Pega o total de registros e tamanho do arquivo CSV
+func FileInfo(csvFilePath string) int {
 
-	reader, _ := CsvReader()
+	reader, fileInfo := CsvReader(csvFilePath)
+	total := 0
 
-	count := 0
+	fileSize := int(fileInfo.Size())
+	fmt.Println("Filinfo size: ", fileSize)
+
 	// leitura de linha a linha do registro
 	for {
 		_, err := reader.Read()
@@ -139,7 +141,10 @@ func totalRecords() int {
 		} else if err != nil { //checa por outros erros
 			fmt.Println("An error encountered ::", err)
 		}
-		count++
+		total++
 	}
-	return count
+
+	fmt.Println("Total de Registros: ", total)
+
+	return total
 }

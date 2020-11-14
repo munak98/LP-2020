@@ -54,7 +54,7 @@ func getMeanScores(scores [4][]float64) [4]float64 {
 
 // Pega as medias das notas de cada area de conhecimento e por raça de todos Estados
 func getStatesMeanScores(states *[]State) {
-	for i := range *states {
+	for i := range (*states) {
 		(*states)[i].Medias = getMeanScores((*states)[i].Scores)
 
 		for j := range (*states)[i].Races {
@@ -111,19 +111,19 @@ func getRaceTypeData(recordLine []string, s *State, raceType int, schoolType int
 func getSchoolType(s *State, raceType int, schoolType int) {
 
 	switch schoolType {
-	case 0: // Nao respondeu
+	case 1: // Nao respondeu
 		s.SchoolType[0]++
 		s.Races[raceType].SchoolType[0]++
 		break
-	case 1: // Publica
+	case 2: // Publica
 		s.SchoolType[1]++
 		s.Races[raceType].SchoolType[1]++
 		break
-	case 2: // Privada
+	case 3: // Privada
 		s.SchoolType[2]++
 		s.Races[raceType].SchoolType[2]++
 		break
-	case 3: // Exterior
+	case 4: // Exterior
 		s.SchoolType[3]++
 		s.Races[raceType].SchoolType[3]++
 		break

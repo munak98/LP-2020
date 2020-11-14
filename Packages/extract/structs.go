@@ -1,5 +1,14 @@
 package extract
 
+//Year - Estrutura de um ano do Enem
+type Year struct {
+	Year         int
+	States       []State
+	CsvFilePath  string
+	TotalRecords int
+	Workers      int
+}
+
 //State - Estrutura de Estado (UF)
 type State struct {
 	Sigla      string
@@ -19,6 +28,48 @@ type Race struct {
 	Scores     [4][]float64
 	Medias     [4]float64
 	SchoolType [4]int
+}
+
+//NewYears construtor de array de Anos do Enem
+func NewYears() []Year {
+
+	years := []Year{}
+	states17 := NewStates()
+	states18 := NewStates()
+	states19 := NewStates()
+	csvFilePath17 := "../microdados_enem_2017/DADOS/MICRODADOS_ENEM_2017.csv"
+	csvFilePath18 := "../microdados_enem_2018/DADOS/MICRODADOS_ENEM_2018.csv"
+	csvFilePath19 := "../microdados_enem_2019/DADOS/MICRODADOS_ENEM_2019.csv"
+
+	year17 := Year{
+		Year:         2017,
+		States:       states17,
+		CsvFilePath:  csvFilePath17,
+		TotalRecords: 6731342,
+		Workers:      2,
+	}
+
+	year18 := Year{
+		Year:         2018,
+		States:       states18,
+		CsvFilePath:  csvFilePath18,
+		TotalRecords: 5513748,
+		Workers:      12,
+	}
+
+	year19 := Year{
+		Year:         2019,
+		States:       states19,
+		CsvFilePath:  csvFilePath19,
+		TotalRecords: 5095271,
+		Workers:      29,
+	}
+
+	years = append(years, year17)
+	years = append(years, year18)
+	years = append(years, year19)
+
+	return years
 }
 
 //NewStates construtor de array de Estruturas de Estado (UF)
