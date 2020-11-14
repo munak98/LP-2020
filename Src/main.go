@@ -62,7 +62,7 @@ func main() {
 	}
 
 	// extract.MostParticipantsUF(states19)
-	fmt.Println("Número de registros analisados:\n\n", count)
+	fmt.Printf("Número de registros analisados: %d \n\n", count)
 	extract.YearsMenu(states19, states18, states17, &schoolScores, &raceScores)
 
 	return
