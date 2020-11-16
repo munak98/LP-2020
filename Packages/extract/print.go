@@ -20,8 +20,8 @@ func PrintUFMeanScores(state State) {
 	fmt.Printf("Numero de participantes de Escola Privada: %d\n", state.SchoolType[2])
 }
 
-//PrintRacesMeanScores printa dados acerca de cada raça
-func PrintRacesMeanScores(state State) {
+//PrintRacesMeanScores printa dados acerca de cada raça por estado
+func PrintUFRacesMeanScores(state State) {
 
 	for i := range state.Races {
 		fmt.Println("---------------------------------------")
@@ -36,10 +36,9 @@ func PrintRacesMeanScores(state State) {
 		fmt.Printf("Numero de participantes de Escola Publica: %d\n", state.Races[i].SchoolType[1])
 		fmt.Printf("Numero de participantes de Escola Privada: %d\n", state.Races[i].SchoolType[2])
 	}
-
 }
 
-//MostParticipantsUF printa o estado com maior numero de participantes de uma UF
+//MostParticipantsUF mostra o estado com maior numero de participantes de um ano
 func MostParticipantsUF(states []State) {
 	var maior = State{}
 
@@ -51,4 +50,37 @@ func MostParticipantsUF(states []State) {
 
 	fmt.Printf("\nO Estado com maior numero de participantes: %s\n", maior.Sigla)
 	fmt.Printf("Numero de participantes: %v\n", maior.Total)
+}
+
+func PrintYearMeanScores(year Year) {
+
+	fmt.Printf("\nMédias nacionais do ano %d\n", year.Year)
+
+	for i := range year.Medias {
+		fmt.Printf("%s %.2f", year.Subjects[i], year.Medias[i])
+	}
+}
+
+func PrintYearRacesMeanScores(year Year) {
+	fmt.Printf("\n\nMédias nacionais por raça\n")
+
+	for j := range year.Subjects {
+		fmt.Printf("%s", year.Subjects[j])
+
+		for i := range year.Races {
+			fmt.Printf("\n\t\t%s: %.2f",year.Races[i].Name,  year.Races[i].Medias[j])
+		}
+	}
+}
+
+func PrintYearSchoolsMeanScores(year Year) {
+	fmt.Printf("\n\nMédias nacionais para escola pública e privada\n")
+
+	for i := range year.Subjects {
+		fmt.Printf("\n%s\n", year.Subjects[i])
+		fmt.Printf("\t\tPública: %.2f\n", year.SchoolMeanScores[1][i])
+		fmt.Printf("\t\tPrivada: %.2f\n", year.SchoolMeanScores[2][i])
+		
+	}
+
 }
