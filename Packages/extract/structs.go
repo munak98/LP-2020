@@ -8,8 +8,8 @@ type Year struct {
 	Medias           [4]float64
 	Races            [6]Race
 	Subjects         []string
-	SchoolScores     [4][4][]float64 // 4 tipos de Escola, 4 Medias
-	SchoolMeanScores [4][4]float64
+	SchoolScores     [4][4][]float64 // 4 tipos de Escola, 4 areas, varias notas
+	SchoolMeanScores [4][4]float64	 // 4 tipos de Escola, 4 medias
 
 	CsvFilePath string
 	Workers     int

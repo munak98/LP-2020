@@ -16,7 +16,6 @@ import (
 
 // CsvReader faz a leitura do arquivo csv
 func CsvReader(csvFilePath string) (*csv.Reader, os.FileInfo) {
-
 	fmt.Printf("FilePath: %s\n", csvFilePath)
 
 	csvFile, err := os.Open(csvFilePath)
@@ -37,7 +36,6 @@ func CsvReader(csvFilePath string) (*csv.Reader, os.FileInfo) {
 
 //FileInfo - Pega o total de registros e tamanho do arquivo CSV
 func FileInfo(csvFilePath string) int {
-
 	reader, fileInfo := CsvReader(csvFilePath)
 	total := 0
 
@@ -126,29 +124,25 @@ func YearsMenu(years []Year) {
 		case -1:
 			os.Exit(3)
 		case 0:
-			fmt.Printf("Dados nacionais Enem 2017\n")
-			PrintYearMeanScores(years[year])
-			PrintYearRacesMeanScores(years[year])
-			PrintYearSchoolsMeanScores(years[year])
-			MenuStates(years[year].States)
+			yearOption(years[year])
 		case 1:
-			fmt.Printf("Dados nacionais Enem 2018\n")
-			PrintYearMeanScores(years[year])
-			PrintYearRacesMeanScores(years[year])
-			PrintYearSchoolsMeanScores(years[year])
-			MenuStates(years[year].States)
+			yearOption(years[year])
 		case 2:
-			fmt.Printf("Dados nacionais Enem 2019\n")
-			PrintYearMeanScores(years[year])
-			PrintYearRacesMeanScores(years[year])
-			PrintYearSchoolsMeanScores(years[year])
-			MenuStates(years[year].States)
+			yearOption(years[year])
 		default:
 			fmt.Println("Opção inválida!")
 			os.Exit(3)
 		}
 		fmt.Printf("\n*****************************************\n")
 	}
+}
+
+func yearOption(year Year) {
+	fmt.Printf("Dados nacionais Enem %d\n", year.Year)
+	PrintYearMeanScores(year)
+	PrintYearRacesMeanScores(year)
+	PrintYearSchoolsMeanScores(year)
+	MenuStates(year.States)
 }
 
 //MenuStates para escolher quais dados mostrar sobre estados
