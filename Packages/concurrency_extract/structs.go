@@ -1,4 +1,4 @@
-package extract
+package concurrency_extract
 
 //State - Estrutura de Estado (UF)
 type State struct {

@@ -1,4 +1,4 @@
-package extract
+package concurrency_extract
 
 import (
 	"encoding/csv"
