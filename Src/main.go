@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"time"
 	"../Packages/extract"
+	"../Packages/concurrency_extract"
 )
 
 type SchoolScores = extract.SchoolScores
@@ -51,9 +52,9 @@ func main() {
 	case 2:
 		fmt.Println("Extraindo dados..")
 		now := time.Now()
-		extract.DataParallel(&states19, &schoolScores, &raceScores, csvFilePath19, &count)
-		extract.DataParallel(&states18, &schoolScores, &raceScores, csvFilePath18, &count)
-		extract.DataParallel(&states17, &schoolScores, &raceScores, csvFilePath17, &count)
+		states19 = concurrency_extract.Data(states19, &schoolScores, &raceScores, csvFilePath19, &count)
+		states18 = concurrency_extract.Data(states18, &schoolScores, &raceScores, csvFilePath18, &count)
+		states17 = concurrency_extract.Data(states17, &schoolScores, &raceScores, csvFilePath17, &count)
 		fmt.Println("\n\nTempo de execução:", time.Since(now))
 		break
 	default:
