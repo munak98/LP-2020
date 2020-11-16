@@ -144,7 +144,7 @@ func YearsMenu(years []Year) {
 			PrintYearSchoolsMeanScores(years[year])
 			MenuStates(years[year].States)
 		default:
-			fmt.Print("Opção inválida!")
+			fmt.Println("Opção inválida!")
 			os.Exit(3)
 		}
 		fmt.Printf("\n*****************************************\n")
@@ -178,7 +178,7 @@ func MenuStates(states []State) {
 		} else if UF == "-1" {
 			break
 		} else {
-			fmt.Print("UF digitada inválida!")
+			fmt.Print("UF digitada inválida!\n")
 			break
 		}
 

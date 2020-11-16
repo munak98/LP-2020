@@ -20,9 +20,9 @@ func main() {
 
 	var opcao int
 	fmt.Println("Escolha uma opção para extrair dados:")
-	fmt.Printf("Digite -1 para sair\n\n")
-	fmt.Printf("\n\t1) Sem go routines\n")
-	fmt.Printf("\t2) Com go routines\n")
+	fmt.Println("Digite -1 para sair")
+	fmt.Println("\n1) Sem Paralelismo")
+	fmt.Println("2) Com Paralelismo")
 	fmt.Print("\n-> ")
 	fmt.Scan(&opcao)
 

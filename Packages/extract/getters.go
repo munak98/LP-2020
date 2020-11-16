@@ -23,7 +23,6 @@ func getData(
 
 	go func() {
 		defer wg.Done()
-
 		// leitura de pedaços do csv paralelamente
 		for i := start; i < end; i++ {
 			recordLine, err := reader.Read()
@@ -49,16 +48,13 @@ func getData(
 				}
 			}
 		}
-		
 	}()
-
 	wg.Wait()
 }
 
 // Pega as notas de areas de conhecimento de cada UF
 func getUFScores(recordLine []string, state *State, year int) {
 	getScores(recordLine, &state.Scores, year)
-	return
 }
 
 func getScores(recordLine []string, scores *[4][]float64, year int) {
@@ -75,7 +71,6 @@ func getScores(recordLine []string, scores *[4][]float64, year int) {
 	scores[1] = append(scores[1], getScore(recordLine, 91)) // Ciencias Humanas - campo 91
 	scores[2] = append(scores[2], getScore(recordLine, 92)) // Linguagens e Código - campo 92
 	scores[3] = append(scores[3], getScore(recordLine, 93)) // Matemática - campo 93
-	return
 }
 
 func getScore(recordLine []string, campo int) float64 {
@@ -100,28 +95,19 @@ func getRacesData(recordLine []string, s *State, year int) {
 	switch raceType {
 	case 0: // Não informado
 		getRaceTypeData(recordLine, s, raceType, schoolType, year)
-		break
 	case 1: // Branca
 		getRaceTypeData(recordLine, s, raceType, schoolType, year)
-		break
 	case 2: // Preta
 		getRaceTypeData(recordLine, s, raceType, schoolType, year)
-		break
 	case 3: // Parda
 		getRaceTypeData(recordLine, s, raceType, schoolType, year)
-		break
 	case 4: // Amarela
 		getRaceTypeData(recordLine, s, raceType, schoolType, year)
-		break
 	case 5: // Indigena
 		getRaceTypeData(recordLine, s, raceType, schoolType, year)
-		break
 	default:
 		fmt.Println("Raça não reconhecida, possível E.T!")
-		break
 	}
-
-	return
 }
 
 // Pega os dados de uma Raça
@@ -134,66 +120,54 @@ func getRaceTypeData(recordLine []string, s *State, raceType int, schoolType int
 // Pega as notas de areas de conhecimento de Cada Raça
 func getRaceScores(recordLine []string, state *State, raceType int, year int) {
 	getScores(recordLine, &state.Races[raceType].Scores, year)
-	return
 }
 
-// quantidade de participantes de cada tipo de escola, 
+// pega quantidade de participantes de cada tipo de escola por estado e raça
 func getSchoolType(s *State, raceType int, schoolType int) {
-
 	switch schoolType {
 	case 1: // Nao respondeu
 		s.SchoolType[0]++
 		s.Races[raceType].SchoolType[0]++
-		break
 	case 2: // Publica
 		s.SchoolType[1]++
 		s.Races[raceType].SchoolType[1]++
-		break
 	case 3: // Privada
 		s.SchoolType[2]++
 		s.Races[raceType].SchoolType[2]++
-		break
 	case 4: // Exterior
 		s.SchoolType[3]++
 		s.Races[raceType].SchoolType[3]++
-		break
 	default:
 		fmt.Println("Algo errado, tipo de escola invalido!")
-		break
 	}
 }
 
 // Calcula as medias das notas de cada area de conhecimento
 func getMeanScores(scores [4][]float64) [4]float64 {
 	meanScores := [4]float64{}
-
 	for i := range scores {
 		meanScores[i], _ = stats.Mean(scores[i])
 	}
-
 	return meanScores
 }
 
 // Pega as medias das notas de cada area de conhecimento e por raça de todos Estados
 func getStatesMeanScores(states *[]State) {
-	for i := range (*states) {
+	for i := range *states {
 		(*states)[i].Medias = getMeanScores((*states)[i].Scores)
 
 		for j := range (*states)[i].Races {
 			(*states)[i].Races[j].Medias = getMeanScores((*states)[i].Races[j].Scores)
 		}
 	}
-	return
 }
 
 // Pega as medias nacionais de cada ano
 func getYearsMeanScores(years *[]Year) {
-	// guarda as medias de todos 26 estados
 	statesMeanScores := [4][]float64{}
-
-	for i := range (*years) {
+	for i := range *years {
 		for j := range (*years)[i].States {
-			for k := range (*years)[i].States[j].Medias{
+			for k := range (*years)[i].States[j].Medias {
 				// pega todas 4 medias dos 26 estados de cada ano
 				statesMeanScores[k] = append(statesMeanScores[k], (*years)[i].States[j].Medias[k])
 			}
@@ -204,13 +178,13 @@ func getYearsMeanScores(years *[]Year) {
 
 // Pega as medias nacionais de cada raça de um ano
 func getYearsRacesMeanScores(years *[]Year) {
-
-	for i := range (*years) {
+	for i := range *years {
 		for j := range (*years)[i].States {
 			for k := range (*years)[i].States[j].Races {
 				for l := range (*years)[i].States[j].Races[k].Medias {
 					// pega todas 4 medias de cada uma das 6 raças de cada um dos 26 estados de cada ano
-					(*years)[i].Races[k].Scores[l] = append(	(*years)[i].Races[k].Scores[l], (*years)[i].States[j].Races[k].Medias[l])
+					(*years)[i].Races[k].Scores[l] =
+						append((*years)[i].Races[k].Scores[l], (*years)[i].States[j].Races[k].Medias[l])
 				}
 			}
 		}
@@ -224,34 +198,25 @@ func getYearsRacesMeanScores(years *[]Year) {
 // Pega os Scores nacionais de cada ano por tipo de escola do ensino medio
 func getYearSchoolScores(recordLine []string, year *Year) {
 
-	schoolType := getIntValue(recordLine, 17)// Tipo de Escola - Campo 17
+	schoolType := getIntValue(recordLine, 17) // Tipo de Escola - Campo 17
 
 	switch schoolType {
-		case 1: // Nao respondeu
-			getScores(recordLine, &year.SchoolScores[0], year.Year)
-			break
-		case 2: // Publica
-			getScores(recordLine, &year.SchoolScores[1], year.Year)
-			
-			break
-		case 3: // Privada
-			getScores(recordLine, &year.SchoolScores[2], year.Year)
-			
-			break
-		case 4: // Exterior
-			getScores(recordLine, &year.SchoolScores[3], year.Year)
-			
-			break
-		default:
-			fmt.Println("Algo errado, tipo de escola invalido!")
-			break
+	case 1: // Nao respondeu
+		getScores(recordLine, &year.SchoolScores[0], year.Year)
+	case 2: // Publica
+		getScores(recordLine, &year.SchoolScores[1], year.Year)
+	case 3: // Privada
+		getScores(recordLine, &year.SchoolScores[2], year.Year)
+	case 4: // Exterior
+		getScores(recordLine, &year.SchoolScores[3], year.Year)
+	default:
+		fmt.Println("Algo errado, tipo de escola invalido!")
 	}
-
-	return
 }
 
+// Pega as medias nacionais de cada ano
 func getYearsSchoolMeanScores(years *[]Year) {
-	for i := range (*years) {
+	for i := range *years {
 		for j := range (*years)[i].SchoolMeanScores {
 			(*years)[i].SchoolMeanScores[j] = getMeanScores((*years)[i].SchoolScores[j])
 		}
