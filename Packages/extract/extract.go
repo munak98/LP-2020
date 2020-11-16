@@ -111,13 +111,12 @@ func DataParallel(years *[]Year) {
 
 	for i := range *years {
 		getStatesMeanScores(&(*years)[i].States)
-		fmt.Printf("Numero de registros analisados de %d: %d\n", years[i].Year, years[i].TotalRecords)
+		fmt.Printf("Numero de registros analisados de %d: %d\n", (*years)[i].Year, (*years)[i].TotalRecords)
 	}
 
 	getYearsMeanScores(&(*years))
 	getYearsRacesMeanScores(&(*years))
 	getYearsSchoolMeanScores(&(*years))
-
 
 	return
 }
