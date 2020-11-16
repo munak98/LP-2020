@@ -51,10 +51,10 @@ func NewYears() []Year {
 	csvFilePath19 := "../microdados_enem_2019/DADOS/MICRODADOS_ENEM_2019.csv"
 
 	subjects := []string{
-		"\n\tCiências da natureza:",
-		"\n\tCiências humanas:",
-		"\n\tLinguagens e códigos:",
-		"\n\tMatemática:",
+		"Ciências da natureza",
+		"Ciências humanas",
+		"Linguagens e códigos",
+		"Matemática",
 	}
 
 	year17 := Year{
