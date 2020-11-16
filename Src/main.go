@@ -19,8 +19,8 @@ func main() {
 	opcao := 0
 	fmt.Println("Escolha uma opção para extrair dados:")
 	fmt.Printf("Digite 0 para sair\n\n")
-	fmt.Printf("\n\t1) Sem go routines\n")
-	fmt.Printf("\t2) Com go routines\n")
+	fmt.Printf("\n\t1) Sem Paralelismo\n")
+	fmt.Printf("\t2) Com Paralelismo\n")
 	fmt.Print("\n-> ")
 	fmt.Scan(&opcao)
 
@@ -39,6 +39,7 @@ func main() {
 		break
 	default:
 		fmt.Println("Opção Inválida!")
+		os.Exit(3)
 		break
 	}
 
