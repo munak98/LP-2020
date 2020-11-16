@@ -1,24 +1,26 @@
 
 # Projeto LP-2020-UnB
 
-Projeto consiste em analisar dados sobre o ENEM de 2019 de todos estados do Brasil, através dos microdados 
-fornecidos pelo inep, os dados coletados são:
+Projeto consiste em analisar dados sobre o ENEM dos anos de 2017, 2018 e 2019, através dos microdados fornecidos pelo [inep](http://inep.gov.br/web/guest/microdados), os dados coletados propiciam as seguintes análises:
+
+### Análise Anual
+
+- Número de participantes 
+- Médias das áreas de conhecimento 
+- Médias das áreas de conhecimento de cada Raça
+- Médias das áreas de conhecimento de cada Tipo de Escola
 
 ### Análise Estadual
 
 - Número de participantes 
-- Médias de cada área de conhecimento 
+- Médias das áreas de conhecimento 
+- Médias das áreas de conhecimento de cada Raça
+- Número de participantes de cada Raça 
 - Número de participantes de Escola Pública e Privada
-
-### Análise por raça
-
-- Número de participantes de cada raça 
-- Médias por área de conhecimento de cada raça
-- Número de participantes de Escola Pública e Privada de cada raça
+- Número de participantes de Escola Pública e Privada de cada Raça
 
 Objetivo é demonstrar os diferenciais e pontos fortes da linguagem Golang, 
-ao realizar a leitura dos microdados e armazenamento dos dados obtidos utilizando 
-processos de execuções paralelas, buscando obter um menor tempo de execução e melhor performance.
+ao realizar a extração de uma grande quantidade de dados dos microdados e armazenamento dos dados obtidos utilizando processos de execuções paralelas e não paralelas, buscando comparar os desempenhos e verificar o aumento de performance que o paralelismo pode fornecer.
 
 ## Pré-requisitos
 
