@@ -60,16 +60,16 @@ func getYearSchoolScores(recordLine []string, year *Year) {
 	switch schoolType {
 	case 1: // Nao respondeu
 		getScores(recordLine, &year.SchoolScores[0], year.Year)
-		year.SchoolType[schoolType-1]++
+		year.SchoolTypes[schoolType-1]++
 	case 2: // Publica
 		getScores(recordLine, &year.SchoolScores[1], year.Year)
-		year.SchoolType[schoolType-1]++
+		year.SchoolTypes[schoolType-1]++
 	case 3: // Privada
 		getScores(recordLine, &year.SchoolScores[2], year.Year)
-		year.SchoolType[schoolType-1]++
+		year.SchoolTypes[schoolType-1]++
 	case 4: // Exterior
 		getScores(recordLine, &year.SchoolScores[3], year.Year)
-		year.SchoolType[schoolType-1]++
+		year.SchoolTypes[schoolType-1]++
 	default:
 		fmt.Println("Algo errado, tipo de escola invalido!")
 	}

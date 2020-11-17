@@ -7,15 +7,17 @@ Projeto consiste em analisar dados sobre o ENEM dos anos de 2017, 2018 e 2019, a
 
 - Número de participantes 
 - Médias das áreas de conhecimento 
+- Número de participantes de cada Raça 
 - Médias das áreas de conhecimento de cada Raça
+- Número de participantes de Escola Pública e Privada
 - Médias das áreas de conhecimento de cada Tipo de Escola
 
 ### Análise Estadual
 
 - Número de participantes 
 - Médias das áreas de conhecimento 
-- Médias das áreas de conhecimento de cada Raça
 - Número de participantes de cada Raça 
+- Médias das áreas de conhecimento de cada Raça
 - Número de participantes de Escola Pública e Privada
 - Número de participantes de Escola Pública e Privada de cada Raça
 

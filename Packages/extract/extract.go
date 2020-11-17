@@ -76,28 +76,34 @@ func DataParallel(years *[]Year) {
 	}()
 	fmt.Println("Extraindo dados..")
 	var wg sync.WaitGroup
+	wg.Add(1)
+	
+	go func() {
+		defer wg.Done()
+		
+		for i := range *years {
+			reader, _ := CsvReader((*years)[i].CsvFilePath)
+			wg.Add(1)
 
-	for i := range *years {
-		reader, _ := CsvReader((*years)[i].CsvFilePath)
-		wg.Add(1)
+			totalRecords := (*years)[i].Total
+			workers := (*years)[i].Workers
 
-		totalRecords := (*years)[i].Total
-		workers := (*years)[i].Workers
+			// Execução paralela dos processos
+			go func(i int) {
+				defer wg.Done()
+				// Loop no numero de processos necessários para cada ano
+				for j := 0; j < (*years)[i].Workers; j++ {
+					getData(
+						reader,
+						&(*years)[i],
+						(totalRecords/workers)*j,     // inicio do pedaço
+						(totalRecords/workers)*(j+1), // final do pedaço
+					)
+				}
+			}(i)
+		}
+	}()
 
-		// Execução paralela dos processos
-		go func(i int) {
-			defer wg.Done()
-			// Loop no numero de processos necessários para cada ano
-			for j := 0; j < (*years)[i].Workers; j++ {
-				getData(
-					reader,
-					&(*years)[i],
-					(totalRecords/workers)*j,     // inicio do pedaço
-					(totalRecords/workers)*(j+1), // final do pedaço
-				)
-			}
-		}(i)
-	}
 	wg.Wait()
 
 	for i := range *years {
