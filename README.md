@@ -22,6 +22,15 @@ processos de execuções paralelas, buscando obter um menor tempo de execução 
 
 ## Pré-requisitos
 
+Baixar pacotes externos utilizados atravé dos comandos:
+
+```bash
+go get golang.org/x/text/encoding/charmap
+
+go get github.com/montanaflynn/stats
+```
+
+
 Para executar o trabalho é preciso baixar as bases de dados referentes ao ENEM 2019 em http://inep.gov.br/web/guest/microdados e descompactar o arquivo no diretório atual.
 Em seguida, todos os pacotes do diretório `./Packages` (opcional) podem ser movidos para o `$GOPATH` local com o seguinte comando:
 
