@@ -41,7 +41,7 @@ func FileInfo(csvFilePath string) int {
 	total := 0
 
 	fileSize := int(fileInfo.Size())
-	fmt.Println("Filinfo size: ", fileSize)
+	fmt.Println("File size: ", fileSize)
 
 	// leitura de linha a linha do registro
 	for {

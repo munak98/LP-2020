@@ -91,9 +91,10 @@ func MenuRaces(state State) {
 		return
 	}
 	for {
-		fmt.Println("\nEscolha a raça.")
+		fmt.Printf("\n*****************************************\n")
+		fmt.Println("Escolha a raça.")
 		fmt.Println("Digite -1 para sair.")
-		fmt.Printf("0-Todas Raças\n1-Não declarada\n2-Branca\n3-Preta\n4-Parda\n5-Amarela\n6-Indígena\n")
+		fmt.Printf("\n0-Todas Raças\n1-Não declarada\n2-Branca\n3-Preta\n4-Parda\n5-Amarela\n6-Indígena\n")
 		fmt.Print("\n-> ")
 
 		var raca int
@@ -137,9 +138,10 @@ func MenuSchools(state State) {
 		return
 	}
 	for {
-		fmt.Println("\nEscolha o tipo de Escola.")
+		fmt.Printf("\n*****************************************\n")
+		fmt.Println("Escolha o tipo de Escola.")
 		fmt.Println("Digite -1 para sair.")
-		fmt.Printf("0-Todos Tipos de Escolas\n1-Não respondeu\n2-Publica\n3-Privada\n4-Exterior\n")
+		fmt.Printf("\n\n0-Todos Tipos de Escolas\n1-Não respondeu\n2-Publica\n3-Privada\n4-Exterior\n")
 		fmt.Print("\n-> ")
 
 		var school int
