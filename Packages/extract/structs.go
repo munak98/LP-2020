@@ -4,12 +4,12 @@ package extract
 type Year struct {
 	Year             int
 	States           []State
-	TotalRecords     int
+	Total            int
 	Medias           [4]float64
 	Races            [6]Race
 	Subjects         []string
 	SchoolScores     [4][4][]float64 // 4 tipos de Escola, 4 areas, varias notas
-	SchoolMeanScores [4][4]float64	 // 4 tipos de Escola, 4 medias
+	SchoolMeanScores [4][4]float64   // 4 tipos de Escola, 4 medias
 
 	CsvFilePath string
 	Workers     int
@@ -20,10 +20,10 @@ type State struct {
 	Sigla      string
 	Code       int
 	Total      int
-	Scores     [4][]float64 // 4 areas de conhecimento
 	Medias     [4]float64
-	Races      [6]Race // 6 raças ao total
-	SchoolType [4]int  // quantidade de registros dos 4 tipos de Escola
+	Scores     [4][]float64 // 4 areas de conhecimento
+	Races      [6]Race      // 6 raças ao total
+	SchoolType [4]int       // quantidade de registros dos 4 tipos de Escola
 }
 
 //Race - Estrutura de Raças
@@ -58,33 +58,33 @@ func NewYears() []Year {
 	}
 
 	year17 := Year{
-		Year:         2017,
-		States:       states17,
-		CsvFilePath:  csvFilePath17,
-		TotalRecords: 6731342, // total de registros
-		Workers:      2,       // numero de processos, tem que ser um divisor do total de registros
-		Races:        races17,
-		Subjects:     subjects,
+		Year:        2017,
+		States:      states17,
+		CsvFilePath: csvFilePath17,
+		Total:       6731342, // total de registros
+		Workers:     2,       // numero de processos, tem que ser um divisor do total de registros
+		Races:       races17,
+		Subjects:    subjects,
 	}
 
 	year18 := Year{
-		Year:         2018,
-		States:       states18,
-		CsvFilePath:  csvFilePath18,
-		TotalRecords: 5513748,
-		Workers:      12,
-		Races:        races18,
-		Subjects:     subjects,
+		Year:        2018,
+		States:      states18,
+		CsvFilePath: csvFilePath18,
+		Total:       5513748,
+		Workers:     12,
+		Races:       races18,
+		Subjects:    subjects,
 	}
 
 	year19 := Year{
-		Year:         2019,
-		States:       states19,
-		CsvFilePath:  csvFilePath19,
-		TotalRecords: 5095271,
-		Workers:      29,
-		Races:        races19,
-		Subjects:     subjects,
+		Year:        2019,
+		States:      states19,
+		CsvFilePath: csvFilePath19,
+		Total:       5095271,
+		Workers:     29,
+		Races:       races19,
+		Subjects:    subjects,
 	}
 
 	years = append(years, year17)
@@ -96,31 +96,24 @@ func NewYears() []Year {
 
 //NewStates construtor de array de Estruturas de Estado (UF)
 func NewStates() []State {
-
 	siglas := []string{"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG",
 		"PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"}
-
 	states := []State{}
-
 	races := NewRaces()
 
 	for i := range siglas {
-
 		state := State{
 			Races: races,
 		}
-
 		states = append(states, state)
 		states[i].Sigla = siglas[i]
 		states[i].Total = 0
 	}
-
 	return states
 }
 
 //NewRaces construtor de array de Raças
 func NewRaces() [6]Race {
-
 	races := [6]Race{
 		Race{Name: "Raça Não Informada", RaceType: 0},
 		Race{Name: "Raça Branca", RaceType: 1},
@@ -129,6 +122,5 @@ func NewRaces() [6]Race {
 		Race{Name: "Raça Amarela", RaceType: 4},
 		Race{Name: "Raça Indigena", RaceType: 5},
 	}
-
 	return races
 }

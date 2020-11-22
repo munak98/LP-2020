@@ -88,7 +88,7 @@ func DataParallel(years *[]Year) {
 		reader, _ := CsvReader((*years)[i].CsvFilePath)
 		wg.Add(1)
 
-		totalRecords := (*years)[i].TotalRecords
+		totalRecords := (*years)[i].Total
 		workers := (*years)[i].Workers
 
 		// Execução paralela dos processos de cada ano
@@ -111,7 +111,7 @@ func DataParallel(years *[]Year) {
 
 	for i := range *years {
 		getStatesMeanScores(&(*years)[i].States)
-		fmt.Printf("Numero de registros analisados de %d: %d\n", (*years)[i].Year, (*years)[i].TotalRecords)
+		fmt.Printf("Numero de registros analisados de %d: %d\n", (*years)[i].Year, (*years)[i].Total)
 	}
 
 	getYearsMeanScores(&(*years))
