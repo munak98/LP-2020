@@ -171,16 +171,10 @@ func getYearsMeanScores(years *[]Year) {
 				// pega todas 4 medias dos 26 estados de cada ano
 				statesMeanScores[k] = append(statesMeanScores[k], (*years)[i].States[j].Medias[k])
 			}
-		}
-		(*years)[i].Medias = getMeanScores(statesMeanScores)
-	}
-}
 
-// Pega as medias nacionais de cada raça de um ano
-func getYearsRacesMeanScores(years *[]Year) {
-	for i := range *years {
-		for j := range (*years)[i].States {
 			for k := range (*years)[i].States[j].Races {
+				(*years)[i].Races[k].Total += (*years)[i].States[j].Races[k].Total
+
 				for l := range (*years)[i].States[j].Races[k].Medias {
 					// pega todas 4 medias de cada uma das 6 raças de cada um dos 26 estados de cada ano
 					(*years)[i].Races[k].Scores[l] =
@@ -188,9 +182,15 @@ func getYearsRacesMeanScores(years *[]Year) {
 				}
 			}
 		}
+		(*years)[i].Medias = getMeanScores(statesMeanScores)
+
 		// tira as medias das 4 medias de cada raça dos 26 estados de cada ano
-		for k := range (*years)[i].Races {
+		for k := range (*years)[i].Races { 
 			(*years)[i].Races[k].Medias = getMeanScores((*years)[i].Races[k].Scores)
+		}
+
+		for j := range (*years)[i].SchoolMeanScores {
+			(*years)[i].SchoolMeanScores[j] = getMeanScores((*years)[i].SchoolScores[j])
 		}
 	}
 }
@@ -211,14 +211,5 @@ func getYearSchoolScores(recordLine []string, year *Year) {
 		getScores(recordLine, &year.SchoolScores[3], year.Year)
 	default:
 		fmt.Println("Algo errado, tipo de escola invalido!")
-	}
-}
-
-// Pega as medias nacionais de cada ano
-func getYearsSchoolMeanScores(years *[]Year) {
-	for i := range *years {
-		for j := range (*years)[i].SchoolMeanScores {
-			(*years)[i].SchoolMeanScores[j] = getMeanScores((*years)[i].SchoolScores[j])
-		}
 	}
 }

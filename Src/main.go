@@ -41,6 +41,8 @@ func main() {
 		os.Exit(3)
 	}
 
+	extract.YearsInfo(years)
+	
 	extract.YearsMenu(years)
 
 	return

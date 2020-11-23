@@ -57,15 +57,11 @@ func Data(years []Year) []Year {
 
 		fmt.Printf("Numero de registros analisados de %d: %d\n", years[i].Year, count)
 		count = 0 // Reseta contagem a cada ano
-	}
 
-	for i := range years {
 		getStatesMeanScores(&years[i].States)
 	}
 
 	getYearsMeanScores(&years)
-	getYearsRacesMeanScores(&years)
-	getYearsSchoolMeanScores(&years)
 
 	return years
 }
@@ -115,8 +111,6 @@ func DataParallel(years *[]Year) {
 	}
 
 	getYearsMeanScores(&(*years))
-	getYearsRacesMeanScores(&(*years))
-	getYearsSchoolMeanScores(&(*years))
 
 	return
 }

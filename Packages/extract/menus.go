@@ -7,7 +7,6 @@ import (
 
 //YearsMenu - para escolher quais dados mostrar sobre anos
 func YearsMenu(years []Year) {
-
 	for {
 		fmt.Printf("\n*****************************************\n")
 		fmt.Println("Escolha o ano.")
