@@ -7,7 +7,6 @@ type Year struct {
 	Total            int
 	Medias           [4]float64
 	Races            [6]Race
-	Subjects         []string
 	SchoolScores     [4][4][]float64 // 4 tipos de Escola, 4 areas, varias notas
 	SchoolMeanScores [4][4]float64   // 4 tipos de Escola, 4 medias
 
@@ -18,7 +17,6 @@ type Year struct {
 //State - Estrutura de Estado (UF)
 type State struct {
 	Sigla      string
-	Code       int
 	Total      int
 	Medias     [4]float64
 	Scores     [4][]float64 // 4 areas de conhecimento
@@ -50,13 +48,6 @@ func NewYears() []Year {
 	csvFilePath18 := "../microdados_enem_2018/DADOS/MICRODADOS_ENEM_2018.csv"
 	csvFilePath19 := "../microdados_enem_2019/DADOS/MICRODADOS_ENEM_2019.csv"
 
-	subjects := []string{
-		"Ciências da natureza",
-		"Ciências humanas",
-		"Linguagens e códigos",
-		"Matemática",
-	}
-
 	year17 := Year{
 		Year:        2017,
 		States:      states17,
@@ -64,7 +55,6 @@ func NewYears() []Year {
 		Total:       6731342, // total de registros
 		Workers:     2,       // numero de processos, tem que ser um divisor do total de registros
 		Races:       races17,
-		Subjects:    subjects,
 	}
 
 	year18 := Year{
@@ -74,7 +64,6 @@ func NewYears() []Year {
 		Total:       5513748,
 		Workers:     12,
 		Races:       races18,
-		Subjects:    subjects,
 	}
 
 	year19 := Year{
@@ -84,7 +73,6 @@ func NewYears() []Year {
 		Total:       5095271,
 		Workers:     29,
 		Races:       races19,
-		Subjects:    subjects,
 	}
 
 	years = append(years, year17)
