@@ -92,7 +92,7 @@ func BiggestMeanScoresState(states []State, year int) {
 }
 
 //BiggestMeanScoresRace mostra a raça com as maiores médias 
-func BiggestMeanScoresRace(races [6]Race, year int) {
+func BiggestMeanScoresRace(races [6]Race) {
 	total := 0.0
 	medias := [6]float64{}
 
@@ -112,6 +112,6 @@ func BiggestMeanScoresRace(races [6]Race, year int) {
 		}
 	}
 
-	fmt.Printf("O Estado com as maiores médias do ano %d: %s\n", year, biggestMeanScoresRace.Name)
+	fmt.Printf("A Raça com as maiores médias: %s\n", biggestMeanScoresRace.Name)
 	PrintMeanScores(biggestMeanScoresRace.Medias)
 }

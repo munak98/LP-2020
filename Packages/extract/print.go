@@ -1,6 +1,9 @@
 package extract
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 //PrintMeanScores mostra as medias
 func PrintMeanScores(medias [4]float64) {
@@ -29,7 +32,7 @@ func PrintSchoolsMeanScores(schoolMeanScores [4][4]float64) {
 	fmt.Printf("Médias por tipo de Escola:\n")
 	fmt.Printf("Não respondeu: \n")
 	PrintMeanScores(schoolMeanScores[0])
-	fmt.Printf("\n*****************************************\n")	
+	fmt.Printf("\n*****************************************\n")
 	fmt.Printf("Pública: \n")
 	PrintMeanScores(schoolMeanScores[1])
 	fmt.Printf("\n*****************************************\n")
@@ -37,7 +40,9 @@ func PrintSchoolsMeanScores(schoolMeanScores [4][4]float64) {
 	PrintMeanScores(schoolMeanScores[2])
 	fmt.Printf("\n*****************************************\n")
 	fmt.Printf("Exterior: \n")
-	PrintMeanScores(schoolMeanScores[3])
+	if !math.IsNaN(schoolMeanScores[3][0]) {
+		PrintMeanScores(schoolMeanScores[3])
+	}
 	fmt.Printf("\n*****************************************\n")
 }
 
@@ -57,9 +62,8 @@ func PrintYearData(year Year) {
 	fmt.Printf("\n*****************************************\n")
 	BiggestMeanScoresState(year.States, year.Year)
 	fmt.Printf("\n*****************************************\n")
-	BiggestMeanScoresRace(year.Races, year.Year)
+	BiggestMeanScoresRace(year.Races)
 	fmt.Printf("\n*****************************************\n")
-
 	MenuStates(year.States)
 }
 
@@ -98,6 +102,9 @@ func PrintUFData(state State) {
 	PrintUFRacesMeanScores(state)
 	fmt.Printf("\n*****************************************\n")
 	MostParticipantsRace(state.Races)
+	fmt.Printf("\n*****************************************\n")
+	BiggestMeanScoresRace(state.Races)
+	fmt.Printf("\n*****************************************\n")
 }
 
 //PrintUFRaceMeanScores printa dados estaduais acerca de uma raça

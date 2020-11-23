@@ -42,7 +42,6 @@ func main() {
 	}
 
 	extract.YearsInfo(years)
-	
 	extract.YearsMenu(years)
 
 	return
