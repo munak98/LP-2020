@@ -33,9 +33,6 @@ func main() {
 		years = extract.Data(years)
 	case 2:
 		extract.DataParallel(&years)
-	case 3:
-		contents := extract.GetFilesContents(years[0].CsvFilePath, years[1].CsvFilePath)
-		fmt.Println(contents)
 	default:
 		fmt.Println("Opção Inválida!")
 		os.Exit(3)

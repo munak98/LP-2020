@@ -8,7 +8,7 @@ import (
 //PrintMeanScores mostra as medias
 func PrintMeanScores(medias [4]float64) {
 	fmt.Println("Médias:")
-	fmt.Printf("\tCiências da natureza: %.2f \n\tCiências humanas: %.2f \n\tLinguagens e códigos: %.2f\n\tMatemática: %.2f",
+	fmt.Printf("\tCiências da natureza: %.2f \n\tCiências humanas: %.2f \n\tLinguagens e códigos: %.2f\n\tMatemática: %.2f\n",
 		medias[0],
 		medias[1],
 		medias[2],
@@ -18,7 +18,7 @@ func PrintMeanScores(medias [4]float64) {
 
 //PrintSchoolTypeNumber mostra o numero de participantes de cada tipo de Escola
 func PrintSchoolTypeNumber(schoolType [4]int) {
-	fmt.Printf("Número de participantes por tipo de Escola:\n")
+	fmt.Printf("\nNúmero de participantes por tipo de Escola:\n")
 	fmt.Printf("\n\tNão respondeu: %d \n\tPública: %d \n\tPrivada: %d\n\tExterior: %d",
 		schoolType[0],
 		schoolType[1],
@@ -42,8 +42,9 @@ func PrintSchoolsMeanScores(schoolMeanScores [4][4]float64) {
 	fmt.Printf("Exterior: \n")
 	if !math.IsNaN(schoolMeanScores[3][0]) {
 		PrintMeanScores(schoolMeanScores[3])
+	} else {
+		fmt.Printf("Sem registros\n")
 	}
-	fmt.Printf("\n*****************************************\n")
 }
 
 //PrintYearData mostra os dados sobre um dado ano

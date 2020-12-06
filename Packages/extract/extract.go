@@ -21,43 +21,36 @@ func Data(years []Year) []Year {
 
 	// loop pelos anos
 	for i := range years {
-
-		reader, _ := CsvReader(years[i].CsvFilePath)
+		reader, _ := CsvReader(years[i].CsvFilePath) // abre arquivo de cada ano
 		count := 0
 
 		// leitura de linha a linha do registro
 		for /* i := 0; i < 500000; i++ */ {
+
+			// Processa os dados linha a linha dos datasets
 			recordLine, err := reader.Read()
 
 			if err == io.EOF {
 				break // chegou ao final do registro
-			} else if err != nil { //checa por outros erros
+			} 
+			if err != nil { //checa por outros erros
 				fmt.Println("An error encountered ::", err)
 			}
 			count++
 			
-			// loop pelos estados
+			// Pega dados de cada estado
 			for j := range years[i].States {
 				if years[i].States[j].Sigla == recordLine[5] {
-
 					years[i].States[j].Total++
-
 					getYearSchoolScores(recordLine, &years[i])
-
-					// coleta as notas de cada area da UF
 					getUFScores(recordLine, &years[i].States[j], years[i].Year)
-
-					// coleta dados de cada area por raça da UF
 					getRacesData(recordLine, &years[i].States[j], years[i].Year)
 				}
 			}
-
-			//fmt.Println("Processando linha:", count)
 		}
 
 		fmt.Printf("Numero de registros analisados de %d: %d\n", years[i].Year, count)
 		count = 0 // Reseta contagem a cada ano
-
 		getStatesMeanScores(&years[i].States)
 	}
 
@@ -79,20 +72,20 @@ func DataParallel(years *[]Year) {
 	fmt.Println("Extraindo dados..")
 
 	var wg sync.WaitGroup
+	wg.Add(3)
 
 	for i := range *years {
 		reader, _ := CsvReader((*years)[i].CsvFilePath)
-		wg.Add(1)
 
 		totalRecords := (*years)[i].Total
-		workers := (*years)[i].Workers
+		workers := 1000
 
 		// Execução paralela dos processos de cada ano
 		go func(i int) {
 			defer wg.Done()
 
-			// Loop no numero de processos necessários para cada ano
-			for j := 0; j < (*years)[i].Workers; j++ {
+			// Numero de processos paralelos necessários para cada ano
+			for j := 0; j <= workers; j++ {
 				getData(
 					reader,
 					&(*years)[i],

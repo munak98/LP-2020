@@ -11,7 +11,6 @@ type Year struct {
 	SchoolMeanScores [4][4]float64   // 4 tipos de Escola, 4 medias
 
 	CsvFilePath string
-	Workers     int
 }
 
 //State - Estrutura de Estado (UF)
@@ -53,7 +52,6 @@ func NewYears() []Year {
 		States:      states17,
 		CsvFilePath: csvFilePath17,
 		Total:       6731342, // total de registros
-		Workers:     2,       // numero de processos, tem que ser um divisor do total de registros
 		Races:       races17,
 	}
 
@@ -62,7 +60,6 @@ func NewYears() []Year {
 		States:      states18,
 		CsvFilePath: csvFilePath18,
 		Total:       5513748,
-		Workers:     12,
 		Races:       races18,
 	}
 
@@ -71,7 +68,6 @@ func NewYears() []Year {
 		States:      states19,
 		CsvFilePath: csvFilePath19,
 		Total:       5095271,
-		Workers:     29,
 		Races:       races19,
 	}
 

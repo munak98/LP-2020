@@ -23,27 +23,23 @@ func getData(
 
 	go func() {
 		defer wg.Done()
+		
 		// leitura de pedaços do csv paralelamente
 		for i := start; i < end; i++ {
 			recordLine, err := reader.Read()
 
 			if err == io.EOF {
 				break // chegou ao final do registro
-			} else if err != nil { //checa por outros erros
+			} 
+			if err != nil { //checa por outros erros
 				fmt.Println("An error encountered ::", err)
 			}
-
+			// Processa os dados do arquivo linha alinha de forma paralela
 			for i := range (*year).States {
 				if (*year).States[i].Sigla == recordLine[5] {
-
 					(*year).States[i].Total++
-
 					getYearSchoolScores(recordLine, &(*year))
-
-					// coleta as notas de cada area da UF
 					getUFScores(recordLine, &(*year).States[i], year.Year)
-
-					// coleta dados de cada area por raça da UF
 					getRacesData(recordLine, &(*year).States[i], year.Year)
 				}
 			}
