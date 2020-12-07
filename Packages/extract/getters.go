@@ -10,7 +10,7 @@ import (
 	"github.com/montanaflynn/stats"
 )
 
-//GetData Pega os dados de forma paralela, lendo pedaços do arquivo
+// getData pega os dados de forma paralela, lendo uma quantidade de linhas do arquivo
 func getData(
 	reader *csv.Reader,
 	year *Year,
@@ -23,7 +23,7 @@ func getData(
 
 	go func() {
 		defer wg.Done()
-		
+
 		// leitura de pedaços do csv paralelamente
 		for i := start; i < end; i++ {
 			recordLine, err := reader.Read()
@@ -141,6 +141,7 @@ func getSchoolType(s *State, raceType int, schoolType int) {
 // Calcula as medias das notas de cada area de conhecimento
 func getMeanScores(scores [4][]float64) [4]float64 {
 	meanScores := [4]float64{}
+	
 	for i := range scores {
 		meanScores[i], _ = stats.Mean(scores[i])
 	}
@@ -161,8 +162,10 @@ func getStatesMeanScores(states *[]State) {
 // Pega as medias nacionais de cada ano
 func getYearsMeanScores(years *[]Year) {
 	statesMeanScores := [4][]float64{}
+
 	for i := range *years {
 		for j := range (*years)[i].States {
+
 			for k := range (*years)[i].States[j].Medias {
 				// pega todas 4 medias dos 26 estados de cada ano
 				statesMeanScores[k] = append(statesMeanScores[k], (*years)[i].States[j].Medias[k])
@@ -193,7 +196,6 @@ func getYearsMeanScores(years *[]Year) {
 
 // Pega os Scores nacionais de cada ano por tipo de escola do ensino medio
 func getYearSchoolScores(recordLine []string, year *Year) {
-
 	schoolType := getIntValue(recordLine, 17) // Tipo de Escola - Campo 17
 
 	switch schoolType {

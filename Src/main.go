@@ -8,6 +8,7 @@ import (
 	"../Packages/extract"
 )
 
+// Definido para utiliza o maximo de processadores  
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 }
@@ -15,8 +16,6 @@ func init() {
 func main() {
 
 	years := extract.NewYears()
-
-	// extract.FileInfo(years[0].CsvFilePath)
 
 	var opcao int
 	fmt.Println("Escolha uma opção para extrair dados:")
@@ -37,7 +36,7 @@ func main() {
 		fmt.Println("Opção Inválida!")
 		os.Exit(3)
 	}
-
+	// Apresentação dos dados anuais e Menus
 	extract.YearsInfo(years)
 	extract.YearsMenu(years)
 
